@@ -4,7 +4,7 @@ export function createProject(name = 'Neues Projekt') {
     name,
     createdAt: new Date().toISOString(),
     roles: [
-      { id: crypto.randomUUID(), name: 'Developer', rate: 800 },
+      { id: crypto.randomUUID(), name: 'Entwickler', rate: 800 },
       { id: crypto.randomUUID(), name: 'Designer', rate: 700 },
     ],
     taskTypes: [
