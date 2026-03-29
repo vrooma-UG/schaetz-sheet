@@ -142,8 +142,8 @@ defineEmits(['close'])
             </summary>
             <div class="help-section-body">
               <ul>
+                <li>Risiken sind rein textuelle Einträge, die dem Vertrieb helfen, im Angebot klare <strong>Abgrenzungen</strong> vorzunehmen.</li>
                 <li>Füge Risiken mit <strong>Kategorie</strong> (Technisch, Organisatorisch, Extern, Finanziell), <strong>Eintrittswahrscheinlichkeit</strong> und <strong>Auswirkung</strong> hinzu.</li>
-                <li>Der <strong>erwartete Puffer</strong> wird automatisch berechnet: Wahrscheinlichkeit (%) × Auswirkung (PT).</li>
                 <li>Setze den Status eines Risikos auf <strong>„Mitigiert"</strong> oder <strong>„Geschlossen"</strong>, sobald Maßnahmen umgesetzt wurden.</li>
               </ul>
             </div>
