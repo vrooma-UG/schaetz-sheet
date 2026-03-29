@@ -9,8 +9,10 @@ import TaskMatrix from './components/TaskMatrix.vue'
 import AggregationPanel from './components/AggregationPanel.vue'
 import DashboardView from './components/DashboardView.vue'
 import RiskManager from './components/RiskManager.vue'
+import HelpModal from './components/HelpModal.vue'
 
 const projects = ref(loadProjects())
+const showHelp = ref(false)
 const activeProjectId = ref(projects.value[0]?.id ?? null)
 const activeView = ref('projects')
 
@@ -143,6 +145,10 @@ function selectProject(id) {
           Import
           <input type="file" accept=".json" hidden @change="e => { const f = e.target.files[0]; if(f) handleImport(f); e.target.value = ''; }" />
         </label>
+        <button class="footer-nav-btn" @click="showHelp = true">
+          <span class="material-symbols-outlined">help</span>
+          Hilfe
+        </button>
       </div>
     </aside>
 
@@ -253,5 +259,6 @@ function selectProject(id) {
         </template>
       </section>
     </div>
+    <HelpModal v-if="showHelp" @close="showHelp = false" />
   </div>
 </template>
