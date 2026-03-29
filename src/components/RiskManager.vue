@@ -29,46 +29,22 @@ const STATUSES = [
 
 // Eintrittswahrscheinlichkeit levels
 const PROBABILITY_LEVELS = [
-  { value: 'low',    label: 'Niedrig', pct: 20,  color: '#16a34a', bg: '#dcfce7' },
-  { value: 'medium', label: 'Mittel',  pct: 50,  color: '#d97706', bg: '#fef3c7' },
-  { value: 'high',   label: 'Hoch',   pct: 80,  color: '#dc2626', bg: '#fee2e2' },
+  { value: 'low',    label: 'Niedrig' },
+  { value: 'medium', label: 'Mittel' },
+  { value: 'high',   label: 'Hoch' },
 ]
 
-// Auswirkung levels (in PT)
+// Auswirkung levels
 const IMPACT_LEVELS = [
-  { value: 'low',    label: 'Niedrig', pt: 2,   color: '#16a34a', bg: '#dcfce7' },
-  { value: 'medium', label: 'Mittel',  pt: 5,   color: '#d97706', bg: '#fef3c7' },
-  { value: 'high',   label: 'Hoch',   pt: 10,  color: '#dc2626', bg: '#fee2e2' },
+  { value: 'low',    label: 'Niedrig' },
+  { value: 'medium', label: 'Mittel' },
+  { value: 'high',   label: 'Hoch' },
 ]
 
-function probInfo(val) {
-  return PROBABILITY_LEVELS.find(l => l.value === val) ?? PROBABILITY_LEVELS[0]
-}
-
-function impactInfo(val) {
-  return IMPACT_LEVELS.find(l => l.value === val) ?? IMPACT_LEVELS[0]
-}
-
-function fmtPT(val) {
-  return Number(val || 0).toFixed(2)
-}
-
-// Expected buffer = (probability % / 100) * impact PT
 const risks = computed(() => {
   if (!props.project.risks) return []
-  return props.project.risks.map(r => {
-    const prob = probInfo(r.probability)
-    const imp  = impactInfo(r.impact)
-    return {
-      ...r,
-      expectedImpact: ((prob.pct / 100) * imp.pt).toFixed(2),
-    }
-  })
+  return props.project.risks
 })
-
-const totalExpectedImpact = computed(() =>
-  risks.value.reduce((s, r) => s + Number(r.expectedImpact), 0)
-)
 
 const openRisks = computed(() => risks.value.filter(r => r.status === 'open').length)
 </script>
@@ -82,13 +58,6 @@ const openRisks = computed(() => risks.value.filter(r => r.status === 'open').le
         <div>
           <p class="risk-kpi-label">Offene Risiken</p>
           <p class="risk-kpi-value">{{ openRisks }}</p>
-        </div>
-      </div>
-      <div class="risk-kpi">
-        <span class="material-symbols-outlined" style="color:#d97706;">exposure</span>
-        <div>
-          <p class="risk-kpi-label">Erwarteter Puffer (PT)</p>
-          <p class="risk-kpi-value">{{ fmtPT(totalExpectedImpact) }} PT</p>
         </div>
       </div>
       <div class="risk-kpi" style="margin-left:auto;">
@@ -133,28 +102,18 @@ const openRisks = computed(() => risks.value.filter(r => r.status === 'open').le
                 </select>
               </td>
               <td>
-                <div class="level-cell">
-                  <select v-model="project.risks.find(r => r.id === risk.id).probability">
-                    <option v-for="l in PROBABILITY_LEVELS" :key="l.value" :value="l.value">{{ l.label }}</option>
-                  </select>
-                  <span
-                    class="factor-badge"
-                    :style="{ background: probInfo(risk.probability).bg, color: probInfo(risk.probability).color }"
-                  >{{ probInfo(risk.probability).pct }}%</span>
-                </div>
+                <select v-model="project.risks.find(r => r.id === risk.id).probability">
+                  <option v-for="l in PROBABILITY_LEVELS" :key="l.value" :value="l.value">{{ l.label }}</option>
+                </select>
               </td>
               <td>
-                <div class="level-cell">
-                  <select v-model="project.risks.find(r => r.id === risk.id).impact">
-                    <option v-for="l in IMPACT_LEVELS" :key="l.value" :value="l.value">{{ l.label }}</option>
-                  </select>
-                  <span
-                    class="factor-badge"
-                    :style="{ background: impactInfo(risk.impact).bg, color: impactInfo(risk.impact).color }"
-                  >{{ impactInfo(risk.impact).pt }} PT</span>
-                </div>
+                <select v-model="project.risks.find(r => r.id === risk.id).impact">
+                  <option v-for="l in IMPACT_LEVELS" :key="l.value" :value="l.value">{{ l.label }}</option>
+                </select>
               </td>
-              <td class="calc bold">{{ risk.expectedImpact }}</td>
+              <td>
+                <input v-model="project.risks.find(r => r.id === risk.id).expectedBuffer" style="min-width:120px" />
+              </td>
               <td>
                 <select v-model="project.risks.find(r => r.id === risk.id).status">
                   <option v-for="s in STATUSES" :key="s.value" :value="s.value">{{ s.label }}</option>
@@ -215,11 +174,5 @@ const openRisks = computed(() => risks.value.filter(r => r.status === 'open').le
   font-size: 20px;
   font-weight: 700;
   color: var(--on-surface);
-}
-
-.level-cell {
-  display: flex;
-  align-items: center;
-  gap: 6px;
 }
 </style>

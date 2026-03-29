@@ -51,6 +51,7 @@ export function createRisk(name = '') {
     category: 'technical',
     probability: 'low',
     impact: 'low',
+    expectedBuffer: '',
     status: 'open',
   }
 }
