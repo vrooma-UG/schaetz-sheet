@@ -9,7 +9,7 @@ defineEmits(['close'])
       <div class="help-header">
         <div class="help-header-left">
           <span class="material-symbols-outlined" style="font-size:24px;color:var(--primary);">help</span>
-          <h2 id="help-title">So funktioniert Schätzsheet</h2>
+          <h2 id="help-title">So funktioniert MiseEnPlace</h2>
         </div>
         <button class="help-close" @click="$emit('close')" aria-label="Hilfe schließen">
           <span class="material-symbols-outlined">close</span>
@@ -20,7 +20,7 @@ defineEmits(['close'])
       <div class="help-body">
         <!-- Intro -->
         <p class="help-intro">
-          Schätzsheet ist ein webbasiertes Werkzeug zur strukturierten Aufwandsschätzung und Risikobewertung für Projekte.
+          MiseEnPlace ist ein webbasiertes Werkzeug zur strukturierten Aufwandsschätzung und Risikobewertung für Projekte.
           Alle Daten werden lokal in deinem Browser gespeichert – es findet keine Übertragung an einen Server statt.
         </p>
 
@@ -44,7 +44,7 @@ defineEmits(['close'])
             <span class="help-step-number">3</span>
             <div>
               <strong>Aufgaben schätzen</strong>
-              <p>Trage optimistische und pessimistische Aufwände pro Task ein. Schätzsheet berechnet den Mittelwert und die Gesamtkosten automatisch.</p>
+              <p>Trage optimistische und pessimistische Aufwände pro Task ein. MiseEnPlace berechnet den Mittelwert und die Gesamtkosten automatisch.</p>
             </div>
           </div>
           <div class="help-step">

@@ -1,4 +1,17 @@
-const STORAGE_KEY = 'schaetz-sheet-projects'
+const STORAGE_KEY = 'mise-en-place-projects'
+const LEGACY_STORAGE_KEY = 'schaetz-sheet-projects'
+
+// Migrate data from the old storage key to the new one if present.
+function migrateLegacyStorage() {
+  const legacy = localStorage.getItem(LEGACY_STORAGE_KEY)
+  if (legacy && !localStorage.getItem(STORAGE_KEY)) {
+    localStorage.setItem(STORAGE_KEY, legacy)
+  }
+  if (legacy) {
+    localStorage.removeItem(LEGACY_STORAGE_KEY)
+  }
+}
+migrateLegacyStorage()
 
 /**
  * Migrate a task type from the legacy single-markup format to the new

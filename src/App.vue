@@ -87,8 +87,8 @@ function selectProject(id) {
     <!-- Sidebar -->
     <aside class="sidebar">
       <div class="sidebar-brand">
-        <h1>Schätzsheet</h1>
-        <p>Precision Ledger Pro</p>
+        <h1>MiseEnPlace</h1>
+        <p>Get your project mised</p>
       </div>
       <nav class="sidebar-nav">
         <button
