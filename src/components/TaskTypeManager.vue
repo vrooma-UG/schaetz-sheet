@@ -56,7 +56,7 @@ const avgMarkups = computed(() => {
         </thead>
         <tbody>
           <tr v-for="type in project.taskTypes" :key="type.id">
-            <td><input v-model="type.name" /></td>
+            <td><input v-model="type.name" style="min-width:160px" /></td>
             <td><input v-model.number="type.pm" type="number" min="0" max="100" style="width:60px" /></td>
             <td><input v-model.number="type.testing" type="number" min="0" max="100" style="width:60px" /></td>
             <td><input v-model.number="type.risk" type="number" min="0" max="100" style="width:60px" /></td>
