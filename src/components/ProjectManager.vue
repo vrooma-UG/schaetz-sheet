@@ -1,11 +1,32 @@
 <script setup>
-import { computed } from 'vue'
+import { ref } from 'vue'
 
 const props = defineProps({
   projects: Array,
   activeProjectId: String,
 })
-const emit = defineEmits(['select', 'new', 'delete'])
+const emit = defineEmits(['select', 'new', 'delete', 'rename'])
+
+const editingId = ref(null)
+const editingName = ref('')
+
+function startRename(p, event) {
+  event.stopPropagation()
+  editingId.value = p.id
+  editingName.value = p.name
+}
+
+function commitRename(p) {
+  const name = editingName.value.trim()
+  if (name && name !== p.name) {
+    emit('rename', { id: p.id, name })
+  }
+  editingId.value = null
+}
+
+function cancelRename() {
+  editingId.value = null
+}
 </script>
 
 <template>
@@ -37,7 +58,25 @@ const emit = defineEmits(['select', 'new', 'delete'])
                 <span class="material-symbols-outlined" style="font-size:16px;">close</span>
               </button>
             </div>
-            <h3 class="project-card-title">{{ p.name }}</h3>
+            <div style="display:flex;align-items:center;gap:8px;">
+              <template v-if="editingId === p.id">
+                <input
+                  class="project-name-input"
+                  v-model="editingName"
+                  @keyup.enter="commitRename(p)"
+                  @keyup.escape="cancelRename"
+                  @blur="commitRename(p)"
+                  @click.stop
+                  autofocus
+                />
+              </template>
+              <template v-else>
+                <h3 class="project-card-title">{{ p.name }}</h3>
+                <button class="rename-btn" @click.stop="startRename(p, $event)" title="Projekt umbenennen">
+                  <span class="material-symbols-outlined" style="font-size:14px;">edit</span>
+                </button>
+              </template>
+            </div>
             <p class="project-card-meta">{{ p.tasks?.length ?? 0 }} Aufgaben · {{ p.roles?.length ?? 0 }} Rollen</p>
           </div>
           <div class="project-card-footer">
@@ -74,7 +113,25 @@ const emit = defineEmits(['select', 'new', 'delete'])
                 <span class="material-symbols-outlined" style="font-size:16px;">close</span>
               </button>
             </div>
-            <h3 class="project-card-title" style="font-size:1rem;margin-top:8px;">{{ p.name }}</h3>
+            <div style="display:flex;align-items:center;gap:6px;margin-top:8px;">
+              <template v-if="editingId === p.id">
+                <input
+                  class="project-name-input"
+                  v-model="editingName"
+                  @keyup.enter="commitRename(p)"
+                  @keyup.escape="cancelRename"
+                  @blur="commitRename(p)"
+                  @click.stop
+                  autofocus
+                />
+              </template>
+              <template v-else>
+                <h3 class="project-card-title" style="font-size:1rem;margin-top:0;">{{ p.name }}</h3>
+                <button class="rename-btn" @click.stop="startRename(p, $event)" title="Projekt umbenennen">
+                  <span class="material-symbols-outlined" style="font-size:14px;">edit</span>
+                </button>
+              </template>
+            </div>
             <p class="project-card-meta">{{ p.tasks?.length ?? 0 }} Aufgaben</p>
           </div>
           <div style="margin-top:16px;display:flex;justify-content:space-between;align-items:flex-end;">
