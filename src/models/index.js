@@ -49,8 +49,8 @@ export function createRisk(name = '') {
     name,
     description: '',
     category: 'technical',
-    probability: 20,
-    impact: 0,
+    probability: 'low',
+    impact: 'low',
     status: 'open',
   }
 }

@@ -27,34 +27,43 @@ const STATUSES = [
   { value: 'closed',     label: 'Geschlossen' },
 ]
 
-function categoryLabel(val) {
-  return CATEGORIES.find(c => c.value === val)?.label ?? val
+// Eintrittswahrscheinlichkeit levels
+const PROBABILITY_LEVELS = [
+  { value: 'low',    label: 'Niedrig', pct: 20,  color: '#16a34a', bg: '#dcfce7' },
+  { value: 'medium', label: 'Mittel',  pct: 50,  color: '#d97706', bg: '#fef3c7' },
+  { value: 'high',   label: 'Hoch',   pct: 80,  color: '#dc2626', bg: '#fee2e2' },
+]
+
+// Auswirkung levels (in PT)
+const IMPACT_LEVELS = [
+  { value: 'low',    label: 'Niedrig', pt: 2,   color: '#16a34a', bg: '#dcfce7' },
+  { value: 'medium', label: 'Mittel',  pt: 5,   color: '#d97706', bg: '#fef3c7' },
+  { value: 'high',   label: 'Hoch',   pt: 10,  color: '#dc2626', bg: '#fee2e2' },
+]
+
+function probInfo(val) {
+  return PROBABILITY_LEVELS.find(l => l.value === val) ?? PROBABILITY_LEVELS[0]
 }
 
-function statusInfo(val) {
-  if (val === 'open')      return { label: 'Offen',       color: '#dc2626', bg: '#fee2e2' }
-  if (val === 'mitigated') return { label: 'Mitigiert',   color: '#d97706', bg: '#fef3c7' }
-  return                          { label: 'Geschlossen', color: '#16a34a', bg: '#dcfce7' }
-}
-
-function probabilityInfo(prob) {
-  const p = Number(prob)
-  if (p <= 20)  return { color: '#16a34a', bg: '#dcfce7' }
-  if (p <= 50)  return { color: '#d97706', bg: '#fef3c7' }
-  return               { color: '#dc2626', bg: '#fee2e2' }
+function impactInfo(val) {
+  return IMPACT_LEVELS.find(l => l.value === val) ?? IMPACT_LEVELS[0]
 }
 
 function fmtPT(val) {
   return Number(val || 0).toFixed(2)
 }
 
-// Expected impact = probability * impact
+// Expected buffer = (probability % / 100) * impact PT
 const risks = computed(() => {
   if (!props.project.risks) return []
-  return props.project.risks.map(r => ({
-    ...r,
-    expectedImpact: ((Number(r.probability) / 100) * Number(r.impact)).toFixed(2),
-  }))
+  return props.project.risks.map(r => {
+    const prob = probInfo(r.probability)
+    const imp  = impactInfo(r.impact)
+    return {
+      ...r,
+      expectedImpact: ((prob.pct / 100) * imp.pt).toFixed(2),
+    }
+  })
 })
 
 const totalExpectedImpact = computed(() =>
@@ -99,8 +108,8 @@ const openRisks = computed(() => risks.value.filter(r => r.status === 'open').le
               <th>Name</th>
               <th>Beschreibung</th>
               <th>Kategorie</th>
-              <th>Wahrscheinlichkeit (%)</th>
-              <th>Auswirkung (PT)</th>
+              <th>Eintrittswahrscheinlichkeit</th>
+              <th>Auswirkung</th>
               <th>Erwarteter Puffer (PT)</th>
               <th>Status</th>
               <th></th>
@@ -124,22 +133,26 @@ const openRisks = computed(() => risks.value.filter(r => r.status === 'open').le
                 </select>
               </td>
               <td>
-                <div style="display:flex;align-items:center;gap:6px;">
-                  <input
-                    v-model.number="project.risks.find(r => r.id === risk.id).probability"
-                    type="number" min="0" max="100" style="width:70px"
-                  />
+                <div class="level-cell">
+                  <select v-model="project.risks.find(r => r.id === risk.id).probability">
+                    <option v-for="l in PROBABILITY_LEVELS" :key="l.value" :value="l.value">{{ l.label }}</option>
+                  </select>
                   <span
                     class="factor-badge"
-                    :style="{ background: probabilityInfo(risk.probability).bg, color: probabilityInfo(risk.probability).color }"
-                  >{{ risk.probability }}%</span>
+                    :style="{ background: probInfo(risk.probability).bg, color: probInfo(risk.probability).color }"
+                  >{{ probInfo(risk.probability).pct }}%</span>
                 </div>
               </td>
               <td>
-                <input
-                  v-model.number="project.risks.find(r => r.id === risk.id).impact"
-                  type="number" min="0" style="width:80px"
-                />
+                <div class="level-cell">
+                  <select v-model="project.risks.find(r => r.id === risk.id).impact">
+                    <option v-for="l in IMPACT_LEVELS" :key="l.value" :value="l.value">{{ l.label }}</option>
+                  </select>
+                  <span
+                    class="factor-badge"
+                    :style="{ background: impactInfo(risk.impact).bg, color: impactInfo(risk.impact).color }"
+                  >{{ impactInfo(risk.impact).pt }} PT</span>
+                </div>
               </td>
               <td class="calc bold">{{ risk.expectedImpact }}</td>
               <td>
@@ -202,5 +215,11 @@ const openRisks = computed(() => risks.value.filter(r => r.status === 'open').le
   font-size: 20px;
   font-weight: 700;
   color: var(--on-surface);
+}
+
+.level-cell {
+  display: flex;
+  align-items: center;
+  gap: 6px;
 }
 </style>

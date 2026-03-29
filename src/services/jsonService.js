@@ -18,12 +18,26 @@ function migrateTaskType(type) {
   }
 }
 
+/**
+ * Migrate a risk from the legacy numeric probability/impact format to the
+ * new level string format ('low' | 'medium' | 'high').
+ */
+function migrateRisk(risk) {
+  const probability = typeof risk.probability === 'number'
+    ? (risk.probability < 35 ? 'low' : risk.probability < 65 ? 'medium' : 'high')
+    : (risk.probability ?? 'low')
+  const impact = typeof risk.impact === 'number'
+    ? (risk.impact < 3.5 ? 'low' : risk.impact < 7.5 ? 'medium' : 'high')
+    : (risk.impact ?? 'low')
+  return { ...risk, probability, impact }
+}
+
 function migrateProject(project) {
   if (!Array.isArray(project.taskTypes)) return project
   return {
     ...project,
     taskTypes: project.taskTypes.map(migrateTaskType),
-    risks: project.risks ?? [],
+    risks: (project.risks ?? []).map(migrateRisk),
   }
 }
 
