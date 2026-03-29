@@ -247,10 +247,6 @@ body {
   margin: 0 auto;
 }
 
-.content-section.is-estimation {
-  overflow: hidden;
-}
-
 /* ─── Buttons ─────────────────────────────────────────────────────────────── */
 button, .btn {
   padding: 6px 12px;
@@ -377,6 +373,18 @@ button.danger:hover { background: var(--error-container); }
   height: 40px;
   background: var(--outline-variant);
   opacity: 0.5;
+}
+
+.factor-badge {
+  display: block;
+  margin-top: 4px;
+  padding: 1px 6px;
+  border-radius: 4px;
+  font-size: 9px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  white-space: nowrap;
 }
 
 /* ─── Project Grid ────────────────────────────────────────────────────────── */
@@ -605,34 +613,26 @@ select {
 /* ─── Task Matrix ─────────────────────────────────────────────────────────── */
 .task-matrix .table-scroll { overflow-x: auto; }
 
-/* ─── Estimation View (screen-limited with internal scroll) ───────────────── */
+/* ─── Estimation View (scrollable page with sticky table header) ──────────── */
 .estimation-view {
   flex: 1;
   display: flex;
   flex-direction: column;
   gap: 40px;
-  min-height: 0;
-  overflow: hidden;
 }
 
 .estimation-view .task-matrix {
-  flex: 1;
   display: flex;
   flex-direction: column;
-  min-height: 0;
-  overflow: hidden;
 }
 
 .estimation-view .task-matrix .card {
-  flex: 1;
   display: flex;
   flex-direction: column;
-  overflow: hidden;
 }
 
 .estimation-view .task-matrix .table-scroll {
-  flex: 1;
-  overflow: auto;
+  overflow-x: auto;
 }
 
 /* ─── Resources Stack (single-column layout) ──────────────────────────────── */
@@ -680,7 +680,7 @@ tfoot tr.avg-row td {
 .agg-block p.big { font-size: 1.75rem; font-weight: 700; color: var(--on-surface); letter-spacing: -0.03em; line-height: 1.1; }
 .agg-block table { font-size: 12px; }
 .agg-block td { padding: 3px 4px; border: none; color: var(--on-surface-variant); }
-.agg-block td:last-child { text-align: right; font-variant-numeric: tabular-nums; font-weight: 600; color: var(--on-surface); }
+.agg-block td.agg-num { text-align: right; font-variant-numeric: tabular-nums; font-weight: 600; color: var(--on-surface); white-space: nowrap; }
 
 /* ─── Empty State ─────────────────────────────────────────────────────────── */
 .empty-state {

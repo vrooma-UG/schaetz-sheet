@@ -7,8 +7,15 @@ const props = defineProps({ project: Object })
 const agg = computed(() => calcAggregations(props.project.tasks, props.project.roles, props.project.taskTypes))
 
 function fmtCost(val) {
-  if (!val) return '€0'
-  return new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'EUR', maximumFractionDigits: 0 }).format(val)
+  return new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'EUR', maximumFractionDigits: 0 }).format(val || 0)
+}
+
+function factorInfo(factor) {
+  if (factor === null) return null
+  if (factor <= 0.25) return { label: 'Gut geschätzt', color: '#16a34a', bg: '#dcfce7' }
+  if (factor <= 0.5)  return { label: 'Akzeptabel',    color: '#65a30d', bg: '#ecfccb' }
+  if (factor <= 1.0)  return { label: 'Kritisch',      color: '#d97706', bg: '#fef3c7' }
+  return                      { label: 'Gefährlich',   color: '#dc2626', bg: '#fee2e2' }
 }
 </script>
 
@@ -38,6 +45,20 @@ function fmtCost(val) {
           <span class="stat-val">{{ agg.maxEffort.toFixed(1) }}</span>
           <span class="stat-lbl">Max PT</span>
         </div>
+        <template v-if="agg.avgFactor !== null">
+          <div class="stat-divider"></div>
+          <div class="stat-item">
+            <span class="stat-val" :style="{ color: factorInfo(agg.avgFactor)?.color }">
+              {{ agg.avgFactor.toFixed(2) }}
+            </span>
+            <span class="stat-lbl">Schätzfaktor</span>
+            <span
+              v-if="factorInfo(agg.avgFactor)"
+              class="factor-badge"
+              :style="{ background: factorInfo(agg.avgFactor).bg, color: factorInfo(agg.avgFactor).color }"
+            >{{ factorInfo(agg.avgFactor).label }}</span>
+          </div>
+        </template>
       </div>
     </div>
 
@@ -53,7 +74,7 @@ function fmtCost(val) {
         <table>
           <tr v-for="(val, key) in agg.effortPerPackage" :key="key">
             <td>{{ key || '(kein Paket)' }}</td>
-            <td>{{ val.toFixed(2) }} PT</td>
+            <td class="agg-num">{{ val.toFixed(2) }} PT</td>
           </tr>
         </table>
       </div>
@@ -62,7 +83,7 @@ function fmtCost(val) {
         <table>
           <tr v-for="(val, key) in agg.costsPerRole" :key="key">
             <td>{{ key }}</td>
-            <td>{{ val.toFixed(2) }} €</td>
+            <td class="agg-num">{{ fmtCost(val) }}</td>
           </tr>
         </table>
       </div>
@@ -71,7 +92,7 @@ function fmtCost(val) {
         <table>
           <tr v-for="(val, key) in agg.costsPerType" :key="key">
             <td>{{ key }}</td>
-            <td>{{ val.toFixed(2) }} €</td>
+            <td class="agg-num">{{ fmtCost(val) }}</td>
           </tr>
         </table>
       </div>

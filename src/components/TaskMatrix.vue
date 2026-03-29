@@ -14,6 +14,10 @@ const enrichedTasks = computed(() =>
   }))
 )
 
+const existingPackages = computed(() =>
+  [...new Set(props.project.tasks.map(t => t.package).filter(p => p && p.trim()))]
+)
+
 function addTask() {
   props.project.tasks.push(createTask('', props.project.roles[0]?.id ?? '', props.project.taskTypes[0]?.id ?? ''))
 }
@@ -23,11 +27,24 @@ function removeTask(id) {
   if (idx !== -1) props.project.tasks.splice(idx, 1)
 }
 
+function moveTask(id, dir) {
+  const idx = props.project.tasks.findIndex(t => t.id === id)
+  if (idx === -1) return
+  const newIdx = idx + dir
+  if (newIdx < 0 || newIdx >= props.project.tasks.length) return
+  const [item] = props.project.tasks.splice(idx, 1)
+  props.project.tasks.splice(newIdx, 0, item)
+}
+
 function fmt(val) {
   if (val === null || val === undefined) return '-'
   return typeof val === 'number' ? val.toFixed(2) : val
 }
-</script>
+
+function fmtCost(val) {
+  if (val === null || val === undefined) return '-'
+  return new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'EUR', maximumFractionDigits: 0 }).format(val)
+}</script>
 
 <template>
   <div class="task-matrix">
@@ -43,6 +60,7 @@ function fmt(val) {
         <table>
           <thead>
             <tr>
+              <th></th>
               <th>Paket</th>
               <th>Aufgabe</th>
               <th>Beschreibung</th>
@@ -53,7 +71,7 @@ function fmt(val) {
               <th>MW</th>
               <th>Aufschlag</th>
               <th>Gesamt PT</th>
-              <th>Kosten €</th>
+              <th>Kosten</th>
               <th>Faktor</th>
               <th>Optional</th>
               <th></th>
@@ -61,7 +79,27 @@ function fmt(val) {
           </thead>
           <tbody>
             <tr v-for="{ index, task, mw, markup, totalEffort, costs, factor } in enrichedTasks" :key="task.id">
-              <td><input v-model="project.tasks[index].package" style="min-width:120px" /></td>
+              <td style="padding:4px 8px;white-space:nowrap;">
+                <button
+                  @click="moveTask(task.id, -1)"
+                  :disabled="index === 0"
+                  style="padding:2px 5px;border-radius:6px;"
+                  title="Nach oben"
+                >
+                  <span class="material-symbols-outlined" style="font-size:13px;">arrow_upward</span>
+                </button>
+                <button
+                  @click="moveTask(task.id, 1)"
+                  :disabled="index === enrichedTasks.length - 1"
+                  style="padding:2px 5px;border-radius:6px;"
+                  title="Nach unten"
+                >
+                  <span class="material-symbols-outlined" style="font-size:13px;">arrow_downward</span>
+                </button>
+              </td>
+              <td>
+                <input v-model="project.tasks[index].package" list="package-suggestions" style="min-width:120px" />
+              </td>
               <td><input v-model="project.tasks[index].name" style="min-width:150px" /></td>
               <td><textarea v-model="project.tasks[index].description" rows="2" style="min-width:200px" /></td>
               <td>
@@ -79,7 +117,7 @@ function fmt(val) {
               <td class="calc">{{ fmt(mw) }}</td>
               <td class="calc">{{ fmt(markup) }}</td>
               <td class="calc bold">{{ fmt(totalEffort) }}</td>
-              <td class="calc">{{ fmt(costs) }}</td>
+              <td class="calc">{{ fmtCost(costs) }}</td>
               <td class="calc">{{ factor !== null ? fmt(factor) : '-' }}</td>
               <td style="text-align:center;"><input type="checkbox" v-model="project.tasks[index].optional" /></td>
               <td>
@@ -90,6 +128,9 @@ function fmt(val) {
             </tr>
           </tbody>
         </table>
+        <datalist id="package-suggestions">
+          <option v-for="pkg in existingPackages" :key="pkg" :value="pkg" />
+        </datalist>
       </div>
       <div v-if="project.tasks.length === 0" style="padding:40px;text-align:center;color:var(--outline);">
         <span class="material-symbols-outlined" style="font-size:32px;display:block;margin-bottom:8px;opacity:0.4;">table_rows</span>
