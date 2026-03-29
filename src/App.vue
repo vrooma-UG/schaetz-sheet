@@ -157,7 +157,7 @@ function selectProject(id) {
       <!-- Top Header -->
       <header class="top-header">
         <div class="header-left">
-          <span class="header-title">The Precision Ledger</span>
+          <span class="header-title">Mise En Place - Get your project mised</span>
         </div>
         <div class="header-actions">
           <button @click="handleExport" :disabled="!activeProject">
