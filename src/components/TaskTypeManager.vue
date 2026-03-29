@@ -17,7 +17,10 @@ function removeTaskType(id) {
   <div class="card">
     <div class="toolbar">
       <h2>Aufgabentypen</h2>
-      <button @click="addTaskType">+ Typ</button>
+      <button @click="addTaskType">
+        <span class="material-symbols-outlined" style="font-size:15px;">add</span>
+        Typ
+      </button>
     </div>
     <table>
       <thead>
@@ -31,7 +34,9 @@ function removeTaskType(id) {
         <tr v-for="type in project.taskTypes" :key="type.id">
           <td><input v-model="type.name" /></td>
           <td><input v-model.number="type.markup" type="number" min="0" max="100" /></td>
-          <td><button class="danger" @click="removeTaskType(type.id)">✕</button></td>
+          <td><button class="danger" @click="removeTaskType(type.id)">
+            <span class="material-symbols-outlined" style="font-size:15px;">close</span>
+          </button></td>
         </tr>
       </tbody>
     </table>

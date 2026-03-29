@@ -10,6 +10,7 @@ import AggregationPanel from './components/AggregationPanel.vue'
 
 const projects = ref(loadProjects())
 const activeProjectId = ref(projects.value[0]?.id ?? null)
+const activeView = ref('projects')
 
 const activeProject = computed(() => projects.value.find(p => p.id === activeProjectId.value) ?? null)
 
@@ -19,6 +20,7 @@ function newProject() {
   const p = createProject()
   projects.value.push(p)
   activeProjectId.value = p.id
+  activeView.value = 'estimation'
 }
 
 function deleteProject(id) {
@@ -34,6 +36,7 @@ async function handleImport(file) {
     p.id = crypto.randomUUID()
     projects.value.push(p)
     activeProjectId.value = p.id
+    activeView.value = 'estimation'
   } catch (e) {
     alert(e.message)
   }
@@ -42,34 +45,127 @@ async function handleImport(file) {
 function handleExport() {
   if (activeProject.value) exportProject(activeProject.value)
 }
+
+function selectProject(id) {
+  activeProjectId.value = id
+  activeView.value = 'estimation'
+}
 </script>
 
 <template>
   <div id="app">
-    <header>
-      <h1>📊 Schätzsheet</h1>
-    </header>
-    <main>
-      <ProjectManager
-        :projects="projects"
-        :activeProjectId="activeProjectId"
-        @select="id => activeProjectId = id"
-        @new="newProject"
-        @delete="deleteProject"
-        @import="handleImport"
-        @export="handleExport"
-      />
-      <template v-if="activeProject">
-        <div class="grid-2">
-          <RoleManager :project="activeProject" />
-          <TaskTypeManager :project="activeProject" />
-        </div>
-        <TaskMatrix :project="activeProject" />
-        <AggregationPanel :project="activeProject" />
-      </template>
-      <div v-else class="empty-state">
-        <p>Kein Projekt ausgewählt. Erstelle ein neues Projekt oder importiere eine JSON-Datei.</p>
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <div class="sidebar-brand">
+        <h1>Schätzsheet</h1>
+        <p>Precision Ledger Pro</p>
       </div>
-    </main>
+      <nav class="sidebar-nav">
+        <button
+          :class="['nav-btn', { active: activeView === 'projects' }]"
+          @click="activeView = 'projects'"
+        >
+          <span class="material-symbols-outlined">folder_open</span>
+          Projekte
+        </button>
+        <button
+          :class="['nav-btn', { active: activeView === 'estimation' }]"
+          @click="activeView = 'estimation'"
+          :disabled="!activeProject"
+        >
+          <span class="material-symbols-outlined">calculate</span>
+          Schätzung
+        </button>
+        <button
+          :class="['nav-btn', { active: activeView === 'resources' }]"
+          @click="activeView = 'resources'"
+          :disabled="!activeProject"
+        >
+          <span class="material-symbols-outlined">groups</span>
+          Ressourcen
+        </button>
+      </nav>
+      <div class="sidebar-footer">
+        <button class="btn-primary" style="border-radius:12px;padding:10px 16px;font-size:13px;font-weight:700;justify-content:center;" @click="newProject">
+          <span class="material-symbols-outlined" style="font-size:16px;">add</span>
+          Neues Projekt
+        </button>
+        <button class="footer-nav-btn" @click="handleExport" :disabled="!activeProject">
+          <span class="material-symbols-outlined">download</span>
+          Export
+        </button>
+        <label class="footer-nav-btn" style="cursor:pointer;">
+          <span class="material-symbols-outlined">upload</span>
+          Import
+          <input type="file" accept=".json" hidden @change="e => { const f = e.target.files[0]; if(f) handleImport(f); e.target.value = ''; }" />
+        </label>
+      </div>
+    </aside>
+
+    <!-- Main Content -->
+    <div class="main-content">
+      <!-- Top Header -->
+      <header class="top-header">
+        <div class="header-left">
+          <span class="header-title">The Precision Ledger</span>
+          <nav class="header-nav">
+            <a href="#" :class="{ active: activeView === 'projects' }" @click.prevent="activeView = 'projects'">Dashboard</a>
+            <a href="#" :class="{ active: activeView === 'estimation' }" @click.prevent="activeView = 'estimation'" v-if="activeProject">Schätzung</a>
+            <a href="#" :class="{ active: activeView === 'resources' }" @click.prevent="activeView = 'resources'" v-if="activeProject">Ressourcen</a>
+          </nav>
+        </div>
+        <div class="header-actions">
+          <button @click="handleExport" :disabled="!activeProject">
+            <span class="material-symbols-outlined" style="font-size:15px;">download</span>
+            Export
+          </button>
+          <label class="btn" style="cursor:pointer;">
+            <span class="material-symbols-outlined" style="font-size:15px;">upload</span>
+            Import
+            <input type="file" accept=".json" hidden @change="e => { const f = e.target.files[0]; if(f) handleImport(f); e.target.value = ''; }" />
+          </label>
+        </div>
+      </header>
+
+      <!-- Content -->
+      <section class="content-section">
+        <!-- Projects View -->
+        <template v-if="activeView === 'projects'">
+          <ProjectManager
+            :projects="projects"
+            :activeProjectId="activeProjectId"
+            @select="selectProject"
+            @new="newProject"
+            @delete="deleteProject"
+          />
+        </template>
+
+        <!-- Estimation View -->
+        <template v-else-if="activeView === 'estimation'">
+          <template v-if="activeProject">
+            <AggregationPanel :project="activeProject" />
+            <TaskMatrix :project="activeProject" />
+          </template>
+          <div v-else class="empty-state">
+            <span class="material-symbols-outlined">calculate</span>
+            <p>Kein Projekt ausgewählt. Wähle ein Projekt aus oder erstelle ein neues.</p>
+          </div>
+        </template>
+
+        <!-- Resources View -->
+        <template v-else-if="activeView === 'resources'">
+          <template v-if="activeProject">
+            <div class="grid-2">
+              <RoleManager :project="activeProject" />
+              <TaskTypeManager :project="activeProject" />
+            </div>
+          </template>
+          <div v-else class="empty-state">
+            <span class="material-symbols-outlined">groups</span>
+            <p>Kein Projekt ausgewählt. Wähle ein Projekt aus oder erstelle ein neues.</p>
+          </div>
+        </template>
+      </section>
+    </div>
   </div>
 </template>

@@ -17,7 +17,10 @@ function removeRole(id) {
   <div class="card">
     <div class="toolbar">
       <h2>Rollen</h2>
-      <button @click="addRole">+ Rolle</button>
+      <button @click="addRole">
+        <span class="material-symbols-outlined" style="font-size:15px;">add</span>
+        Rolle
+      </button>
     </div>
     <table>
       <thead>
@@ -31,7 +34,9 @@ function removeRole(id) {
         <tr v-for="role in project.roles" :key="role.id">
           <td><input v-model="role.name" /></td>
           <td><input v-model.number="role.rate" type="number" min="0" /></td>
-          <td><button class="danger" @click="removeRole(role.id)">✕</button></td>
+          <td><button class="danger" @click="removeRole(role.id)">
+            <span class="material-symbols-outlined" style="font-size:15px;">close</span>
+          </button></td>
         </tr>
       </tbody>
     </table>
