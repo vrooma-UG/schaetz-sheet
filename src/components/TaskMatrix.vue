@@ -61,9 +61,9 @@ function fmt(val) {
           </thead>
           <tbody>
             <tr v-for="{ index, task, mw, markup, totalEffort, costs, factor } in enrichedTasks" :key="task.id">
-              <td><input v-model="project.tasks[index].package" /></td>
-              <td><input v-model="project.tasks[index].name" /></td>
-              <td><input v-model="project.tasks[index].description" /></td>
+              <td><input v-model="project.tasks[index].package" style="min-width:120px" /></td>
+              <td><input v-model="project.tasks[index].name" style="min-width:150px" /></td>
+              <td><textarea v-model="project.tasks[index].description" rows="2" style="min-width:200px" /></td>
               <td>
                 <select v-model="project.tasks[index].roleId">
                   <option v-for="r in project.roles" :key="r.id" :value="r.id">{{ r.name }}</option>
