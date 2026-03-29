@@ -154,44 +154,13 @@ const costsByRoleSlices = computed(() => {
       </div>
     </div>
 
-    <!-- Charts Row 1: Effort by Package + Effort by Role -->
+    <!-- Charts Row 1: Effort by Package + Costs by Package -->
     <div class="charts-grid">
       <div class="chart-card">
         <h3 class="chart-title">Aufwand je Paket (PT)</h3>
         <div v-if="effortByPackage.length" class="bar-chart">
           <div v-for="item in effortByPackage" :key="item.label" class="bar-row">
             <span class="bar-label" :title="item.label">{{ item.label || '(kein Paket)' }}</span>
-            <div class="bar-track">
-              <div class="bar-fill" :style="{ width: item.pct + '%', background: item.color }"></div>
-            </div>
-            <span class="bar-value">{{ fmtPT(item.value) }}</span>
-          </div>
-        </div>
-        <p v-else class="chart-empty">Keine Daten</p>
-      </div>
-
-      <div class="chart-card">
-        <h3 class="chart-title">Aufwand je Rolle (PT)</h3>
-        <div v-if="effortByRole.length" class="bar-chart">
-          <div v-for="item in effortByRole" :key="item.label" class="bar-row">
-            <span class="bar-label" :title="item.label">{{ item.label }}</span>
-            <div class="bar-track">
-              <div class="bar-fill" :style="{ width: item.pct + '%', background: item.color }"></div>
-            </div>
-            <span class="bar-value">{{ fmtPT(item.value) }}</span>
-          </div>
-        </div>
-        <p v-else class="chart-empty">Keine Daten</p>
-      </div>
-    </div>
-
-    <!-- Charts Row 2: Effort by Type + Costs by Package -->
-    <div class="charts-grid">
-      <div class="chart-card">
-        <h3 class="chart-title">Aufwand je Typ (PT)</h3>
-        <div v-if="effortByType.length" class="bar-chart">
-          <div v-for="item in effortByType" :key="item.label" class="bar-row">
-            <span class="bar-label" :title="item.label">{{ item.label }}</span>
             <div class="bar-track">
               <div class="bar-fill" :style="{ width: item.pct + '%', background: item.color }"></div>
             </div>
@@ -216,17 +185,17 @@ const costsByRoleSlices = computed(() => {
       </div>
     </div>
 
-    <!-- Charts Row 3: Costs by Role + Costs by Type -->
+    <!-- Charts Row 2: Effort by Type + Costs by Type -->
     <div class="charts-grid">
       <div class="chart-card">
-        <h3 class="chart-title">Kosten je Rolle (€)</h3>
-        <div v-if="costsByRole.length" class="bar-chart">
-          <div v-for="item in costsByRole" :key="item.label" class="bar-row">
+        <h3 class="chart-title">Aufwand je Typ (PT)</h3>
+        <div v-if="effortByType.length" class="bar-chart">
+          <div v-for="item in effortByType" :key="item.label" class="bar-row">
             <span class="bar-label" :title="item.label">{{ item.label }}</span>
             <div class="bar-track">
               <div class="bar-fill" :style="{ width: item.pct + '%', background: item.color }"></div>
             </div>
-            <span class="bar-value">{{ fmtCost(item.value) }}</span>
+            <span class="bar-value">{{ fmtPT(item.value) }}</span>
           </div>
         </div>
         <p v-else class="chart-empty">Keine Daten</p>
@@ -236,6 +205,37 @@ const costsByRoleSlices = computed(() => {
         <h3 class="chart-title">Kosten je Typ (€)</h3>
         <div v-if="costsByType.length" class="bar-chart">
           <div v-for="item in costsByType" :key="item.label" class="bar-row">
+            <span class="bar-label" :title="item.label">{{ item.label }}</span>
+            <div class="bar-track">
+              <div class="bar-fill" :style="{ width: item.pct + '%', background: item.color }"></div>
+            </div>
+            <span class="bar-value">{{ fmtCost(item.value) }}</span>
+          </div>
+        </div>
+        <p v-else class="chart-empty">Keine Daten</p>
+      </div>
+    </div>
+
+    <!-- Charts Row 3: Effort by Role + Costs by Role -->
+    <div class="charts-grid">
+      <div class="chart-card">
+        <h3 class="chart-title">Aufwand je Rolle (PT)</h3>
+        <div v-if="effortByRole.length" class="bar-chart">
+          <div v-for="item in effortByRole" :key="item.label" class="bar-row">
+            <span class="bar-label" :title="item.label">{{ item.label }}</span>
+            <div class="bar-track">
+              <div class="bar-fill" :style="{ width: item.pct + '%', background: item.color }"></div>
+            </div>
+            <span class="bar-value">{{ fmtPT(item.value) }}</span>
+          </div>
+        </div>
+        <p v-else class="chart-empty">Keine Daten</p>
+      </div>
+
+      <div class="chart-card">
+        <h3 class="chart-title">Kosten je Rolle (€)</h3>
+        <div v-if="costsByRole.length" class="bar-chart">
+          <div v-for="item in costsByRole" :key="item.label" class="bar-row">
             <span class="bar-label" :title="item.label">{{ item.label }}</span>
             <div class="bar-track">
               <div class="bar-fill" :style="{ width: item.pct + '%', background: item.color }"></div>

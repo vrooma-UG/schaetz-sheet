@@ -123,20 +123,20 @@ function factorInfo(factor) {
         </table>
       </div>
       <div class="agg-block">
-        <h3>Kosten je Rolle</h3>
+        <h3>Aufwand je Rolle</h3>
         <table>
-          <tr v-for="(val, key) in agg.costsPerRole" :key="key">
+          <tr v-for="(val, key) in agg.effortPerRole" :key="key">
             <td>{{ key }}</td>
-            <td class="agg-num">{{ fmtCost(val) }}</td>
+            <td class="agg-num">{{ fmtPT(val) }} PT</td>
           </tr>
         </table>
       </div>
       <div class="agg-block">
-        <h3>Kosten je Typ</h3>
+        <h3>Aufwand je Typ</h3>
         <table>
-          <tr v-for="(val, key) in agg.costsPerType" :key="key">
+          <tr v-for="(val, key) in agg.effortPerType" :key="key">
             <td>{{ key }}</td>
-            <td class="agg-num">{{ fmtCost(val) }}</td>
+            <td class="agg-num">{{ fmtPT(val) }} PT</td>
           </tr>
         </table>
       </div>
