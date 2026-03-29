@@ -645,6 +645,14 @@ select {
 td.calc { color: var(--on-surface-variant); font-variant-numeric: tabular-nums; white-space: nowrap; font-family: 'Inter', monospace; }
 td.calc.bold { font-weight: 700; color: var(--on-surface); }
 
+tfoot tr.avg-row td {
+  background: var(--surface-container-low);
+  border-top: 2px solid var(--outline-variant);
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--on-surface-variant);
+}
+
 /* ─── Aggregation ─────────────────────────────────────────────────────────── */
 .agg-grid {
   display: grid;
