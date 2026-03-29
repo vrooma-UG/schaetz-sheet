@@ -4,12 +4,16 @@ import { createTaskType } from '../models/index.js'
 const props = defineProps({ project: Object })
 
 function addTaskType() {
-  props.project.taskTypes.push(createTaskType('Neuer Typ', 0))
+  props.project.taskTypes.push(createTaskType('Neuer Typ'))
 }
 
 function removeTaskType(id) {
   const idx = props.project.taskTypes.findIndex(t => t.id === id)
   if (idx !== -1) props.project.taskTypes.splice(idx, 1)
+}
+
+function totalMarkup(type) {
+  return (type.pm || 0) + (type.testing || 0) + (type.risk || 0) + (type.docs || 0) + (type.warranty || 0)
 }
 </script>
 
@@ -22,23 +26,35 @@ function removeTaskType(id) {
         Typ
       </button>
     </div>
-    <table>
-      <thead>
-        <tr>
-          <th>Typ</th>
-          <th>Aufschlag (%)</th>
-          <th></th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr v-for="type in project.taskTypes" :key="type.id">
-          <td><input v-model="type.name" /></td>
-          <td><input v-model.number="type.markup" type="number" min="0" max="100" /></td>
-          <td><button class="danger" @click="removeTaskType(type.id)">
-            <span class="material-symbols-outlined" style="font-size:15px;">close</span>
-          </button></td>
-        </tr>
-      </tbody>
-    </table>
+    <div class="table-scroll">
+      <table class="surcharge-matrix">
+        <thead>
+          <tr>
+            <th>Typ</th>
+            <th title="Projektmanagement">PM %</th>
+            <th title="Testing">Testing %</th>
+            <th title="Risiko">Risiko %</th>
+            <th title="Dokumentation">Doku %</th>
+            <th title="Gewährleistung">Gewährleistung %</th>
+            <th title="Gesamtaufschlag">Gesamt %</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr v-for="type in project.taskTypes" :key="type.id">
+            <td><input v-model="type.name" /></td>
+            <td><input v-model.number="type.pm" type="number" min="0" max="100" style="width:60px" /></td>
+            <td><input v-model.number="type.testing" type="number" min="0" max="100" style="width:60px" /></td>
+            <td><input v-model.number="type.risk" type="number" min="0" max="100" style="width:60px" /></td>
+            <td><input v-model.number="type.docs" type="number" min="0" max="100" style="width:60px" /></td>
+            <td><input v-model.number="type.warranty" type="number" min="0" max="100" style="width:60px" /></td>
+            <td class="calc bold">{{ totalMarkup(type) }} %</td>
+            <td><button class="danger" @click="removeTaskType(type.id)">
+              <span class="material-symbols-outlined" style="font-size:15px;">close</span>
+            </button></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
   </div>
 </template>

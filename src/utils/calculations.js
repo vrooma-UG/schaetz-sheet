@@ -24,7 +24,15 @@ export function calcTaskMetrics(task, roles, taskTypes) {
   const role = roles.find(r => r.id === task.roleId)
   const type = taskTypes.find(t => t.id === task.typeId)
   const mw = calcMW(task.opt, task.pess)
-  const markupPct = type ? type.markup : 0
+  // Support legacy single-markup format as well as new per-surcharge format
+  let markupPct = 0
+  if (type) {
+    if (typeof type.markup === 'number') {
+      markupPct = type.markup
+    } else {
+      markupPct = (type.pm || 0) + (type.testing || 0) + (type.risk || 0) + (type.docs || 0) + (type.warranty || 0)
+    }
+  }
   const markup = calcMarkup(mw, markupPct)
   const totalEffort = calcTotalEffort(mw, markup)
   const rate = role ? role.rate : 0
