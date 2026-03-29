@@ -1,5 +1,31 @@
 const STORAGE_KEY = 'schaetz-sheet-projects'
 
+/**
+ * Migrate a task type from the legacy single-markup format to the new
+ * per-surcharge format.  A legacy task type carries a numeric `markup`
+ * field and no individual surcharge keys.
+ */
+function migrateTaskType(type) {
+  if (typeof type.markup === 'number') {
+    const { markup, ...rest } = type
+    // Map the old single markup value entirely to pm as a best-effort migration.
+    return { ...rest, pm: markup, testing: 0, risk: 0, docs: 0, warranty: 0 }
+  }
+  // Ensure all surcharge fields exist in case the project was partially migrated.
+  return {
+    pm: 0, testing: 0, risk: 0, docs: 0, warranty: 0,
+    ...type,
+  }
+}
+
+function migrateProject(project) {
+  if (!Array.isArray(project.taskTypes)) return project
+  return {
+    ...project,
+    taskTypes: project.taskTypes.map(migrateTaskType),
+  }
+}
+
 export function saveProjects(projects) {
   localStorage.setItem(STORAGE_KEY, JSON.stringify(projects))
 }
@@ -7,7 +33,8 @@ export function saveProjects(projects) {
 export function loadProjects() {
   try {
     const raw = localStorage.getItem(STORAGE_KEY)
-    return raw ? JSON.parse(raw) : []
+    const projects = raw ? JSON.parse(raw) : []
+    return projects.map(migrateProject)
   } catch {
     return []
   }
@@ -28,7 +55,7 @@ export function importProject(file) {
     const reader = new FileReader()
     reader.onload = e => {
       try {
-        resolve(JSON.parse(e.target.result))
+        resolve(migrateProject(JSON.parse(e.target.result)))
       } catch {
         reject(new Error('Ungültige JSON-Datei'))
       }

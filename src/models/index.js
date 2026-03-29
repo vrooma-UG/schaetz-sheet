@@ -8,11 +8,10 @@ export function createProject(name = 'Neues Projekt') {
       { id: crypto.randomUUID(), name: 'Designer', rate: 700 },
     ],
     taskTypes: [
-      { id: 'testing', name: 'Testing', markup: 15 },
-      { id: 'pm', name: 'PM', markup: 10 },
-      { id: 'risiko', name: 'Risiko', markup: 10 },
-      { id: 'dokumentation', name: 'Dokumentation', markup: 5 },
-      { id: 'gewaehrleistung', name: 'Gewährleistung', markup: 5 },
+      { id: crypto.randomUUID(), name: 'ProjectManagement', pm: 10, testing: 0, risk: 10, docs: 10, warranty: 0 },
+      { id: crypto.randomUUID(), name: 'Install', pm: 5, testing: 5, risk: 5, docs: 5, warranty: 0 },
+      { id: crypto.randomUUID(), name: 'Configuration', pm: 10, testing: 5, risk: 5, docs: 5, warranty: 10 },
+      { id: crypto.randomUUID(), name: 'Develop', pm: 10, testing: 5, risk: 5, docs: 10, warranty: 10 },
     ],
     tasks: [],
   }
@@ -22,8 +21,8 @@ export function createRole(name = '', rate = 0) {
   return { id: crypto.randomUUID(), name, rate: Number(rate) }
 }
 
-export function createTaskType(name = '', markup = 0) {
-  return { id: crypto.randomUUID(), name, markup: Number(markup) }
+export function createTaskType(name = '') {
+  return { id: crypto.randomUUID(), name, pm: 0, testing: 0, risk: 0, docs: 0, warranty: 0 }
 }
 
 export function createTask(packageName = '', roleId = '', typeId = '') {
