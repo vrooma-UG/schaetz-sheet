@@ -45,10 +45,12 @@ function barChartData(obj) {
 
 const effortByPackage = computed(() => barChartData(agg.value.effortPerPackage))
 const effortByType    = computed(() => barChartData(agg.value.effortPerType))
+const effortByRole    = computed(() => barChartData(agg.value.effortPerRole))
 const costsByRole     = computed(() => barChartData(agg.value.costsPerRole))
 const costsByType     = computed(() => barChartData(agg.value.costsPerType))
+const costsByPackage  = computed(() => barChartData(agg.value.costsPerPackage))
 
-// ── Donut chart for effort split ─────────────────────────────────────────────
+// ── Donut chart helpers ───────────────────────────────────────────────────────
 const DONUT_R = 60
 const DONUT_CX = 80
 const DONUT_CY = 80
@@ -59,7 +61,7 @@ function donutSlices(values) {
   if (!total) return []
   const circumference = 2 * Math.PI * DONUT_R
   let offset = 0
-  return values.map((v, i) => {
+  return values.map((v) => {
     const dash = (v.value / total) * circumference
     const slice = { ...v, dash, gap: circumference - dash, offset, pct: ((v.value / total) * 100).toFixed(1) }
     offset += dash
@@ -75,36 +77,65 @@ const effortSplitSlices = computed(() => {
     { label: 'Optional', value: optional, color: '#7c3aed' },
   ])
 })
+
+const effortByTypeSlices = computed(() => {
+  const entries = Object.entries(agg.value.effortPerType).filter(([, v]) => v > 0)
+  return donutSlices(entries.map(([label, value], i) => ({ label, value, color: BAR_COLORS[i % BAR_COLORS.length] })))
+})
+
+const costsByRoleSlices = computed(() => {
+  const entries = Object.entries(agg.value.costsPerRole).filter(([, v]) => v > 0)
+  return donutSlices(entries.map(([label, value], i) => ({ label, value, color: BAR_COLORS[i % BAR_COLORS.length] })))
+})
 </script>
 
 <template>
   <div class="dashboard">
     <!-- KPI Cards -->
     <div class="kpi-grid">
-      <div class="kpi-card">
-        <span class="kpi-icon material-symbols-outlined">schedule</span>
-        <div>
-          <p class="kpi-label">Gesamtaufwand (Mittel)</p>
-          <p class="kpi-value">{{ fmtPT(agg.totalEffort) }} PT</p>
+      <!-- Pflichtaufwand: PT + Euro -->
+      <div class="kpi-card kpi-card--mandatory">
+        <span class="kpi-icon material-symbols-outlined">lock</span>
+        <div class="kpi-body">
+          <p class="kpi-label">Pflichtaufwand</p>
+          <p class="kpi-value">{{ fmtPT(agg.totals.ohneOptional.mittel) }} PT</p>
+          <p class="kpi-sub">{{ fmtCost(agg.mandatoryCosts) }}</p>
         </div>
       </div>
-      <div class="kpi-card">
-        <span class="kpi-icon material-symbols-outlined">euro</span>
-        <div>
-          <p class="kpi-label">Gesamtkosten</p>
-          <p class="kpi-value">{{ fmtCost(agg.totalCosts) }}</p>
+      <!-- Optional Aufwand: PT + Euro -->
+      <div class="kpi-card kpi-card--optional">
+        <span class="kpi-icon material-symbols-outlined">add_circle</span>
+        <div class="kpi-body">
+          <p class="kpi-label">Optional Aufwand</p>
+          <p class="kpi-value">{{ fmtPT(agg.optionalEffort) }} PT</p>
+          <p class="kpi-sub">{{ fmtCost(agg.optionalCosts) }}</p>
         </div>
       </div>
+      <!-- Aufgaben gesamt: Pflicht + Optional -->
       <div class="kpi-card">
         <span class="kpi-icon material-symbols-outlined">task_alt</span>
-        <div>
+        <div class="kpi-body">
           <p class="kpi-label">Aufgaben gesamt</p>
           <p class="kpi-value">{{ project.tasks.length }}</p>
+          <p class="kpi-sub">
+            <span class="kpi-tag kpi-tag--mandatory">{{ agg.mandatoryTaskCount }} Pflicht</span>
+            <span class="kpi-tag kpi-tag--optional">{{ agg.optionalTaskCount }} Optional</span>
+          </p>
         </div>
       </div>
+      <!-- Gesamtaufwand -->
+      <div class="kpi-card">
+        <span class="kpi-icon material-symbols-outlined">schedule</span>
+        <div class="kpi-body">
+          <p class="kpi-label">Gesamtaufwand (Mittel)</p>
+          <p class="kpi-value">{{ fmtPT(agg.totalEffort) }} PT</p>
+          <p class="kpi-sub">{{ fmtCost(agg.totalCosts) }}</p>
+        </div>
+      </div>
+      <!-- Ø Schätzfaktor -->
       <div class="kpi-card">
         <span class="kpi-icon material-symbols-outlined">trending_up</span>
-        <div>
+        <div class="kpi-body">
           <p class="kpi-label">Ø Schätzfaktor</p>
           <p
             class="kpi-value"
@@ -121,25 +152,10 @@ const effortSplitSlices = computed(() => {
           </p>
         </div>
       </div>
-      <div class="kpi-card">
-        <span class="kpi-icon material-symbols-outlined">lock</span>
-        <div>
-          <p class="kpi-label">Pflichtaufwand (Mittel)</p>
-          <p class="kpi-value">{{ fmtPT(agg.totals.ohneOptional.mittel) }} PT</p>
-        </div>
-      </div>
-      <div class="kpi-card">
-        <span class="kpi-icon material-symbols-outlined">add_circle</span>
-        <div>
-          <p class="kpi-label">Optionaler Aufwand</p>
-          <p class="kpi-value">{{ fmtPT(agg.optionalEffort) }} PT</p>
-        </div>
-      </div>
     </div>
 
-    <!-- Charts Row 1 -->
+    <!-- Charts Row 1: Effort by Package + Effort by Role -->
     <div class="charts-grid">
-      <!-- Effort by Package -->
       <div class="chart-card">
         <h3 class="chart-title">Aufwand je Paket (PT)</h3>
         <div v-if="effortByPackage.length" class="bar-chart">
@@ -154,7 +170,23 @@ const effortSplitSlices = computed(() => {
         <p v-else class="chart-empty">Keine Daten</p>
       </div>
 
-      <!-- Effort by Type -->
+      <div class="chart-card">
+        <h3 class="chart-title">Aufwand je Rolle (PT)</h3>
+        <div v-if="effortByRole.length" class="bar-chart">
+          <div v-for="item in effortByRole" :key="item.label" class="bar-row">
+            <span class="bar-label" :title="item.label">{{ item.label }}</span>
+            <div class="bar-track">
+              <div class="bar-fill" :style="{ width: item.pct + '%', background: item.color }"></div>
+            </div>
+            <span class="bar-value">{{ fmtPT(item.value) }}</span>
+          </div>
+        </div>
+        <p v-else class="chart-empty">Keine Daten</p>
+      </div>
+    </div>
+
+    <!-- Charts Row 2: Effort by Type + Costs by Package -->
+    <div class="charts-grid">
       <div class="chart-card">
         <h3 class="chart-title">Aufwand je Typ (PT)</h3>
         <div v-if="effortByType.length" class="bar-chart">
@@ -168,11 +200,24 @@ const effortSplitSlices = computed(() => {
         </div>
         <p v-else class="chart-empty">Keine Daten</p>
       </div>
+
+      <div class="chart-card">
+        <h3 class="chart-title">Kosten je Paket (€)</h3>
+        <div v-if="costsByPackage.length" class="bar-chart">
+          <div v-for="item in costsByPackage" :key="item.label" class="bar-row">
+            <span class="bar-label" :title="item.label">{{ item.label || '(kein Paket)' }}</span>
+            <div class="bar-track">
+              <div class="bar-fill" :style="{ width: item.pct + '%', background: item.color }"></div>
+            </div>
+            <span class="bar-value">{{ fmtCost(item.value) }}</span>
+          </div>
+        </div>
+        <p v-else class="chart-empty">Keine Daten</p>
+      </div>
     </div>
 
-    <!-- Charts Row 2 -->
+    <!-- Charts Row 3: Costs by Role + Costs by Type -->
     <div class="charts-grid">
-      <!-- Costs by Role -->
       <div class="chart-card">
         <h3 class="chart-title">Kosten je Rolle (€)</h3>
         <div v-if="costsByRole.length" class="bar-chart">
@@ -187,7 +232,6 @@ const effortSplitSlices = computed(() => {
         <p v-else class="chart-empty">Keine Daten</p>
       </div>
 
-      <!-- Costs by Type -->
       <div class="chart-card">
         <h3 class="chart-title">Kosten je Typ (€)</h3>
         <div v-if="costsByType.length" class="bar-chart">
@@ -203,10 +247,11 @@ const effortSplitSlices = computed(() => {
       </div>
     </div>
 
-    <!-- Effort Split Donut + Summary -->
-    <div class="charts-grid">
+    <!-- Charts Row 4: Donut charts -->
+    <div class="charts-grid charts-grid--3">
+      <!-- Pflicht vs. Optional -->
       <div class="chart-card donut-card">
-        <h3 class="chart-title">Pflicht vs. Optional</h3>
+        <h3 class="chart-title">Pflicht vs. Optional (PT)</h3>
         <div class="donut-wrap">
           <svg :width="DONUT_CX * 2" :height="DONUT_CY * 2" style="overflow:visible">
             <circle
@@ -237,7 +282,77 @@ const effortSplitSlices = computed(() => {
         </div>
       </div>
 
-      <!-- Schätzfaktor Summary -->
+      <!-- Aufwand je Typ donut -->
+      <div class="chart-card donut-card">
+        <h3 class="chart-title">Aufwand je Typ (PT)</h3>
+        <div class="donut-wrap" v-if="effortByTypeSlices.length">
+          <svg :width="DONUT_CX * 2" :height="DONUT_CY * 2" style="overflow:visible">
+            <circle
+              :cx="DONUT_CX" :cy="DONUT_CY" :r="DONUT_R"
+              fill="none" stroke="var(--outline-variant)" :stroke-width="STROKE"
+            />
+            <circle
+              v-for="(s, i) in effortByTypeSlices" :key="i"
+              :cx="DONUT_CX" :cy="DONUT_CY" :r="DONUT_R"
+              fill="none"
+              :stroke="s.color"
+              :stroke-width="STROKE"
+              :stroke-dasharray="`${s.dash} ${s.gap}`"
+              :stroke-dashoffset="-s.offset"
+              stroke-linecap="butt"
+              style="transform:rotate(-90deg);transform-origin:50% 50%"
+            />
+            <text :x="DONUT_CX" :y="DONUT_CY - 6" text-anchor="middle" font-size="13" font-weight="700" fill="var(--on-surface)">{{ fmtPT(agg.totalEffort) }}</text>
+            <text :x="DONUT_CX" :y="DONUT_CY + 12" text-anchor="middle" font-size="10" fill="var(--on-surface-variant)">PT gesamt</text>
+          </svg>
+          <div class="donut-legend">
+            <div v-for="s in effortByTypeSlices" :key="s.label" class="legend-item">
+              <span class="legend-dot" :style="{ background: s.color }"></span>
+              <span>{{ s.label }}</span>
+              <span class="legend-pct">{{ s.pct }}%</span>
+            </div>
+          </div>
+        </div>
+        <p v-else class="chart-empty">Keine Daten</p>
+      </div>
+
+      <!-- Kosten je Rolle donut -->
+      <div class="chart-card donut-card">
+        <h3 class="chart-title">Kosten je Rolle (€)</h3>
+        <div class="donut-wrap" v-if="costsByRoleSlices.length">
+          <svg :width="DONUT_CX * 2" :height="DONUT_CY * 2" style="overflow:visible">
+            <circle
+              :cx="DONUT_CX" :cy="DONUT_CY" :r="DONUT_R"
+              fill="none" stroke="var(--outline-variant)" :stroke-width="STROKE"
+            />
+            <circle
+              v-for="(s, i) in costsByRoleSlices" :key="i"
+              :cx="DONUT_CX" :cy="DONUT_CY" :r="DONUT_R"
+              fill="none"
+              :stroke="s.color"
+              :stroke-width="STROKE"
+              :stroke-dasharray="`${s.dash} ${s.gap}`"
+              :stroke-dashoffset="-s.offset"
+              stroke-linecap="butt"
+              style="transform:rotate(-90deg);transform-origin:50% 50%"
+            />
+            <text :x="DONUT_CX" :y="DONUT_CY - 6" text-anchor="middle" font-size="13" font-weight="700" fill="var(--on-surface)">{{ fmtCost(agg.totalCosts) }}</text>
+            <text :x="DONUT_CX" :y="DONUT_CY + 12" text-anchor="middle" font-size="10" fill="var(--on-surface-variant)">gesamt</text>
+          </svg>
+          <div class="donut-legend">
+            <div v-for="s in costsByRoleSlices" :key="s.label" class="legend-item">
+              <span class="legend-dot" :style="{ background: s.color }"></span>
+              <span>{{ s.label }}</span>
+              <span class="legend-pct">{{ s.pct }}%</span>
+            </div>
+          </div>
+        </div>
+        <p v-else class="chart-empty">Keine Daten</p>
+      </div>
+    </div>
+
+    <!-- Schätzfaktor Summary -->
+    <div class="charts-grid">
       <div class="chart-card">
         <h3 class="chart-title">Schätzfaktor Überblick</h3>
         <div class="factor-summary">
@@ -305,6 +420,48 @@ const effortSplitSlices = computed(() => {
   gap: 14px;
 }
 
+.kpi-card--mandatory {
+  border-color: #2563eb44;
+  background: #eff6ff;
+}
+
+.kpi-card--optional {
+  border-color: #7c3aed44;
+  background: #f5f3ff;
+}
+
+.kpi-body {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.kpi-sub {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--on-surface-variant);
+  margin-top: 2px;
+}
+
+.kpi-tag {
+  display: inline-block;
+  font-size: 11px;
+  font-weight: 600;
+  border-radius: 6px;
+  padding: 2px 7px;
+  margin-right: 4px;
+}
+
+.kpi-tag--mandatory {
+  background: #dbeafe;
+  color: #1d4ed8;
+}
+
+.kpi-tag--optional {
+  background: #ede9fe;
+  color: #6d28d9;
+}
+
 .kpi-icon {
   font-size: 28px;
   color: var(--primary);
@@ -340,8 +497,13 @@ const effortSplitSlices = computed(() => {
   gap: 16px;
 }
 
+.charts-grid--3 {
+  grid-template-columns: repeat(3, 1fr);
+}
+
 @media (max-width: 900px) {
   .charts-grid { grid-template-columns: 1fr; }
+  .charts-grid--3 { grid-template-columns: 1fr; }
 }
 
 .chart-card {

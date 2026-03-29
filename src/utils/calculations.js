@@ -103,6 +103,18 @@ export function calcAggregations(tasks, roles, taskTypes) {
       .reduce((s, m) => s + m.costs, 0)
   }
 
+  const effortPerRole = {}
+  for (const role of roles) {
+    effortPerRole[role.name] = allMetrics
+      .filter(m => m.task.roleId === role.id)
+      .reduce((s, m) => s + m.totalEffort, 0)
+  }
+
+  const costsPerPackage = {}
+  for (const m of allMetrics) {
+    costsPerPackage[m.task.package] = (costsPerPackage[m.task.package] || 0) + m.costs
+  }
+
   function avgFactorOf(filter) {
     const vals = allMetrics.filter(filter).map(m => m.factor).filter(f => f !== null)
     return vals.length ? vals.reduce((s, f) => s + f, 0) / vals.length : null
@@ -120,10 +132,18 @@ export function calcAggregations(tasks, roles, taskTypes) {
   }
 
   const totalCosts = allMetrics.reduce((s, m) => s + m.costs, 0)
+  const mandatoryCosts = allMetrics.filter(mandatory).reduce((s, m) => s + m.costs, 0)
+  const optionalCosts = allMetrics.filter(optional).reduce((s, m) => s + m.costs, 0)
+
+  const mandatoryTaskCount = tasks.filter(t => !t.optional).length
+  const optionalTaskCount = tasks.filter(t => !!t.optional).length
 
   return {
     totalEffort, totals, effortPerPackage, optionalEffort,
     costsPerRole, costsPerType, effortPerType, totalCosts,
+    effortPerRole, costsPerPackage,
+    mandatoryCosts, optionalCosts,
+    mandatoryTaskCount, optionalTaskCount,
     avgFactor, avgFactorMandatory, avgFactorOptional,
   }
 }
