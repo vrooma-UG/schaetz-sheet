@@ -621,6 +621,63 @@ select {
   gap: 40px;
 }
 
+.estimation-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.estimation-title {
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: var(--on-surface);
+  margin: 0;
+  letter-spacing: -0.02em;
+}
+
+.project-title-input {
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: var(--on-surface);
+  background: var(--surface-container-low);
+  border: 2px solid var(--primary);
+  border-radius: 8px;
+  padding: 4px 10px;
+  outline: none;
+  min-width: 280px;
+}
+
+.project-name-input {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--on-surface);
+  background: var(--surface-container-low);
+  border: 2px solid var(--primary);
+  border-radius: 6px;
+  padding: 3px 8px;
+  outline: none;
+  width: 100%;
+}
+
+.rename-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--outline);
+  padding: 4px;
+  border-radius: 6px;
+  transition: color 0.15s, background 0.15s;
+}
+
+.rename-btn:hover {
+  color: var(--primary);
+  background: var(--surface-container-highest);
+}
+
+
 .estimation-view .task-matrix {
   display: flex;
   flex-direction: column;
@@ -678,9 +735,16 @@ tfoot tr.avg-row td {
 
 .agg-block p { font-size: 13px; margin-bottom: 2px; color: var(--on-surface-variant); }
 .agg-block p.big { font-size: 1.75rem; font-weight: 700; color: var(--on-surface); letter-spacing: -0.03em; line-height: 1.1; }
-.agg-block table { font-size: 12px; }
+.agg-block table { font-size: 12px; width: 100%; }
 .agg-block td { padding: 3px 4px; border: none; color: var(--on-surface-variant); }
 .agg-block td.agg-num { text-align: right; font-variant-numeric: tabular-nums; font-weight: 600; color: var(--on-surface); white-space: nowrap; }
+
+.totals-table { border-collapse: collapse; width: 100%; font-size: 13px; }
+.totals-table th { text-align: right; padding: 4px 8px; font-weight: 700; color: var(--outline); font-size: 10px; text-transform: uppercase; letter-spacing: 0.1em; }
+.totals-table th:first-child { text-align: left; }
+.totals-table td { padding: 5px 8px; border-top: 1px solid var(--outline-variant); color: var(--on-surface-variant); }
+.totals-table td:first-child { font-weight: 600; color: var(--on-surface); }
+.totals-table td.agg-num { text-align: right; font-variant-numeric: tabular-nums; font-weight: 600; color: var(--on-surface); white-space: nowrap; }
 
 /* ─── Empty State ─────────────────────────────────────────────────────────── */
 .empty-state {

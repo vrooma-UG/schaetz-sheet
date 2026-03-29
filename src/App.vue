@@ -14,6 +14,27 @@ const activeView = ref('projects')
 
 const activeProject = computed(() => projects.value.find(p => p.id === activeProjectId.value) ?? null)
 
+const editingProjectName = ref(false)
+const projectNameDraft = ref('')
+
+function startEditProjectName() {
+  if (!activeProject.value) return
+  projectNameDraft.value = activeProject.value.name
+  editingProjectName.value = true
+}
+
+function commitProjectName() {
+  const name = projectNameDraft.value.trim()
+  if (name && activeProject.value) {
+    activeProject.value.name = name
+  }
+  editingProjectName.value = false
+}
+
+function cancelEditProjectName() {
+  editingProjectName.value = false
+}
+
 watch(projects, val => saveProjects(val), { deep: true })
 
 function newProject() {
@@ -44,6 +65,11 @@ async function handleImport(file) {
 
 function handleExport() {
   if (activeProject.value) exportProject(activeProject.value)
+}
+
+function renameProject(id, name) {
+  const p = projects.value.find(p => p.id === id)
+  if (p) p.name = name
 }
 
 function selectProject(id) {
@@ -132,12 +158,31 @@ function selectProject(id) {
             @select="selectProject"
             @new="newProject"
             @delete="deleteProject"
+            @rename="({ id, name }) => renameProject(id, name)"
           />
         </template>
 
         <!-- Estimation View -->
         <template v-else-if="activeView === 'estimation'">
           <div v-if="activeProject" class="estimation-view">
+            <div class="estimation-header">
+              <template v-if="editingProjectName">
+                <input
+                  class="project-title-input"
+                  v-model="projectNameDraft"
+                  @keyup.enter="commitProjectName"
+                  @keyup.escape="cancelEditProjectName"
+                  @blur="commitProjectName"
+                  autofocus
+                />
+              </template>
+              <template v-else>
+                <h2 class="estimation-title">{{ activeProject.name }}</h2>
+                <button class="rename-btn" @click="startEditProjectName" title="Projekt umbenennen">
+                  <span class="material-symbols-outlined" style="font-size:16px;">edit</span>
+                </button>
+              </template>
+            </div>
             <AggregationPanel :project="activeProject" />
             <TaskMatrix :project="activeProject" />
           </div>

@@ -10,6 +10,10 @@ function fmtCost(val) {
   return new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'EUR', maximumFractionDigits: 0 }).format(val || 0)
 }
 
+function fmtPT(val) {
+  return Number(val).toFixed(2)
+}
+
 function factorInfo(factor) {
   if (factor === null) return null
   if (factor <= 0.25) return { label: 'Gut geschätzt', color: '#16a34a', bg: '#dcfce7' }
@@ -25,28 +29,13 @@ function factorInfo(factor) {
     <div class="hero-section">
       <div class="hero-stats">
         <p class="hero-label">Gesamtaufwand</p>
-        <h2 class="hero-value">{{ agg.totalEffort.toFixed(2) }} PT</h2>
+        <h2 class="hero-value">{{ fmtPT(agg.totalEffort) }} PT</h2>
         <p class="hero-sub">
           Aggregiert über {{ project.tasks.length }} Aufgaben in {{ project.name }}.
         </p>
       </div>
       <div class="stats-row">
-        <div class="stat-item">
-          <span class="stat-val">{{ agg.minEffort.toFixed(1) }}</span>
-          <span class="stat-lbl">Min PT</span>
-        </div>
-        <div class="stat-divider"></div>
-        <div class="stat-item">
-          <span class="stat-val">{{ agg.avgEffort.toFixed(1) }}</span>
-          <span class="stat-lbl">MW PT</span>
-        </div>
-        <div class="stat-divider"></div>
-        <div class="stat-item">
-          <span class="stat-val">{{ agg.maxEffort.toFixed(1) }}</span>
-          <span class="stat-lbl">Max PT</span>
-        </div>
         <template v-if="agg.avgFactor !== null">
-          <div class="stat-divider"></div>
           <div class="stat-item">
             <span class="stat-val" :style="{ color: factorInfo(agg.avgFactor)?.color }">
               {{ agg.avgFactor.toFixed(2) }}
@@ -62,19 +51,49 @@ function factorInfo(factor) {
       </div>
     </div>
 
+    <!-- Totals Table -->
+    <div class="agg-block" style="margin-top:24px;">
+      <h3>Aufwand Übersicht (PT)</h3>
+      <table class="totals-table">
+        <thead>
+          <tr>
+            <th></th>
+            <th>Min</th>
+            <th>Mittel</th>
+            <th>Max</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Gesamt</td>
+            <td class="agg-num">{{ fmtPT(agg.totals.gesamt.min) }}</td>
+            <td class="agg-num">{{ fmtPT(agg.totals.gesamt.mittel) }}</td>
+            <td class="agg-num">{{ fmtPT(agg.totals.gesamt.max) }}</td>
+          </tr>
+          <tr>
+            <td>Ohne Optional</td>
+            <td class="agg-num">{{ fmtPT(agg.totals.ohneOptional.min) }}</td>
+            <td class="agg-num">{{ fmtPT(agg.totals.ohneOptional.mittel) }}</td>
+            <td class="agg-num">{{ fmtPT(agg.totals.ohneOptional.max) }}</td>
+          </tr>
+          <tr>
+            <td>Nur Optional</td>
+            <td class="agg-num">{{ fmtPT(agg.totals.nurOptional.min) }}</td>
+            <td class="agg-num">{{ fmtPT(agg.totals.nurOptional.mittel) }}</td>
+            <td class="agg-num">{{ fmtPT(agg.totals.nurOptional.max) }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
     <!-- Detail Cards -->
     <div class="agg-grid" style="margin-top:24px;">
-      <div class="agg-block">
-        <h3>Optional</h3>
-        <p class="big">{{ agg.optionalEffort.toFixed(2) }}</p>
-        <p>PT optionaler Aufwand</p>
-      </div>
       <div class="agg-block">
         <h3>Aufwand je Paket</h3>
         <table>
           <tr v-for="(val, key) in agg.effortPerPackage" :key="key">
             <td>{{ key || '(kein Paket)' }}</td>
-            <td class="agg-num">{{ val.toFixed(2) }} PT</td>
+            <td class="agg-num">{{ fmtPT(val) }} PT</td>
           </tr>
         </table>
       </div>

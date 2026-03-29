@@ -41,19 +41,53 @@ export function calcTaskMetrics(task, roles, taskTypes) {
   return { mw, markup, markupPct, totalEffort, costs, factor }
 }
 
+function calcScenarioEffort(task, markupPct, scenario) {
+  let base
+  if (scenario === 'min') base = Number(task.opt)
+  else if (scenario === 'max') base = Number(task.pess)
+  else base = calcMW(task.opt, task.pess)
+  return base + calcMarkup(base, markupPct)
+}
+
+function sumEfforts(metrics, filter, scenario) {
+  return metrics
+    .filter(filter)
+    .reduce((s, m) => s + calcScenarioEffort(m.task, m.markupPct, scenario), 0)
+}
+
 export function calcAggregations(tasks, roles, taskTypes) {
   const allMetrics = tasks.map(t => ({ task: t, ...calcTaskMetrics(t, roles, taskTypes) }))
 
-  const totalEffort = allMetrics.reduce((s, m) => s + m.totalEffort, 0)
+  const mandatory = m => !m.task.optional
+  const optional  = m => !!m.task.optional
+  const all       = () => true
+
+  const totals = {
+    gesamt: {
+      min:    sumEfforts(allMetrics, all, 'min'),
+      mittel: sumEfforts(allMetrics, all, 'mittel'),
+      max:    sumEfforts(allMetrics, all, 'max'),
+    },
+    ohneOptional: {
+      min:    sumEfforts(allMetrics, mandatory, 'min'),
+      mittel: sumEfforts(allMetrics, mandatory, 'mittel'),
+      max:    sumEfforts(allMetrics, mandatory, 'max'),
+    },
+    nurOptional: {
+      min:    sumEfforts(allMetrics, optional, 'min'),
+      mittel: sumEfforts(allMetrics, optional, 'mittel'),
+      max:    sumEfforts(allMetrics, optional, 'max'),
+    },
+  }
+
+  const totalEffort = totals.gesamt.mittel
 
   const effortPerPackage = {}
   for (const m of allMetrics) {
     effortPerPackage[m.task.package] = (effortPerPackage[m.task.package] || 0) + m.totalEffort
   }
 
-  const optionalEffort = allMetrics
-    .filter(m => m.task.optional)
-    .reduce((s, m) => s + m.totalEffort, 0)
+  const optionalEffort = totals.nurOptional.mittel
 
   const costsPerRole = {}
   for (const role of roles) {
@@ -69,13 +103,8 @@ export function calcAggregations(tasks, roles, taskTypes) {
       .reduce((s, m) => s + m.costs, 0)
   }
 
-  const effortValues = allMetrics.map(m => m.totalEffort)
-  const minEffort = effortValues.length ? Math.min(...effortValues) : 0
-  const maxEffort = effortValues.length ? Math.max(...effortValues) : 0
-  const avgEffort = effortValues.length ? totalEffort / effortValues.length : 0
-
   const factorValues = allMetrics.map(m => m.factor).filter(f => f !== null)
   const avgFactor = factorValues.length ? factorValues.reduce((s, f) => s + f, 0) / factorValues.length : null
 
-  return { totalEffort, effortPerPackage, optionalEffort, costsPerRole, costsPerType, minEffort, avgEffort, maxEffort, avgFactor }
+  return { totalEffort, totals, effortPerPackage, optionalEffort, costsPerRole, costsPerType, avgFactor }
 }
