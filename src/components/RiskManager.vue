@@ -79,7 +79,6 @@ const openRisks = computed(() => risks.value.filter(r => r.status === 'open').le
               <th>Kategorie</th>
               <th>Eintrittswahrscheinlichkeit</th>
               <th>Auswirkung</th>
-              <th>Erwarteter Puffer (PT)</th>
               <th>Status</th>
               <th></th>
             </tr>
@@ -110,9 +109,6 @@ const openRisks = computed(() => risks.value.filter(r => r.status === 'open').le
                 <select v-model="project.risks.find(r => r.id === risk.id).impact">
                   <option v-for="l in IMPACT_LEVELS" :key="l.value" :value="l.value">{{ l.label }}</option>
                 </select>
-              </td>
-              <td>
-                <input v-model="project.risks.find(r => r.id === risk.id).expectedBuffer" style="min-width:120px" />
               </td>
               <td>
                 <select v-model="project.risks.find(r => r.id === risk.id).status">
