@@ -108,11 +108,6 @@ function selectProject(id) {
       <header class="top-header">
         <div class="header-left">
           <span class="header-title">The Precision Ledger</span>
-          <nav class="header-nav">
-            <a href="#" :class="{ active: activeView === 'projects' }" @click.prevent="activeView = 'projects'">Dashboard</a>
-            <a href="#" :class="{ active: activeView === 'estimation' }" @click.prevent="activeView = 'estimation'" v-if="activeProject">Schätzung</a>
-            <a href="#" :class="{ active: activeView === 'resources' }" @click.prevent="activeView = 'resources'" v-if="activeProject">Ressourcen</a>
-          </nav>
         </div>
         <div class="header-actions">
           <button @click="handleExport" :disabled="!activeProject">
@@ -128,7 +123,7 @@ function selectProject(id) {
       </header>
 
       <!-- Content -->
-      <section class="content-section">
+      <section :class="['content-section', { 'is-estimation': activeView === 'estimation' }]">
         <!-- Projects View -->
         <template v-if="activeView === 'projects'">
           <ProjectManager
@@ -142,10 +137,10 @@ function selectProject(id) {
 
         <!-- Estimation View -->
         <template v-else-if="activeView === 'estimation'">
-          <template v-if="activeProject">
+          <div v-if="activeProject" class="estimation-view">
             <AggregationPanel :project="activeProject" />
             <TaskMatrix :project="activeProject" />
-          </template>
+          </div>
           <div v-else class="empty-state">
             <span class="material-symbols-outlined">calculate</span>
             <p>Kein Projekt ausgewählt. Wähle ein Projekt aus oder erstelle ein neues.</p>
@@ -155,7 +150,7 @@ function selectProject(id) {
         <!-- Resources View -->
         <template v-else-if="activeView === 'resources'">
           <template v-if="activeProject">
-            <div class="grid-2">
+            <div class="resources-stack">
               <RoleManager :project="activeProject" />
               <TaskTypeManager :project="activeProject" />
             </div>
