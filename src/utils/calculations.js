@@ -74,5 +74,8 @@ export function calcAggregations(tasks, roles, taskTypes) {
   const maxEffort = effortValues.length ? Math.max(...effortValues) : 0
   const avgEffort = effortValues.length ? totalEffort / effortValues.length : 0
 
-  return { totalEffort, effortPerPackage, optionalEffort, costsPerRole, costsPerType, minEffort, avgEffort, maxEffort }
+  const factorValues = allMetrics.map(m => m.factor).filter(f => f !== null)
+  const avgFactor = factorValues.length ? factorValues.reduce((s, f) => s + f, 0) / factorValues.length : null
+
+  return { totalEffort, effortPerPackage, optionalEffort, costsPerRole, costsPerType, minEffort, avgEffort, maxEffort, avgFactor }
 }
