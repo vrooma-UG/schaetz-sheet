@@ -23,6 +23,7 @@ function migrateProject(project) {
   return {
     ...project,
     taskTypes: project.taskTypes.map(migrateTaskType),
+    risks: project.risks ?? [],
   }
 }
 

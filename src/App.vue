@@ -7,6 +7,8 @@ import RoleManager from './components/RoleManager.vue'
 import TaskTypeManager from './components/TaskTypeManager.vue'
 import TaskMatrix from './components/TaskMatrix.vue'
 import AggregationPanel from './components/AggregationPanel.vue'
+import DashboardView from './components/DashboardView.vue'
+import RiskManager from './components/RiskManager.vue'
 
 const projects = ref(loadProjects())
 const activeProjectId = ref(projects.value[0]?.id ?? null)
@@ -110,6 +112,22 @@ function selectProject(id) {
           <span class="material-symbols-outlined">groups</span>
           Ressourcen
         </button>
+        <button
+          :class="['nav-btn', { active: activeView === 'dashboard' }]"
+          @click="activeView = 'dashboard'"
+          :disabled="!activeProject"
+        >
+          <span class="material-symbols-outlined">dashboard</span>
+          Dashboard
+        </button>
+        <button
+          :class="['nav-btn', { active: activeView === 'risks' }]"
+          @click="activeView = 'risks'"
+          :disabled="!activeProject"
+        >
+          <span class="material-symbols-outlined">warning</span>
+          Risiken
+        </button>
       </nav>
       <div class="sidebar-footer">
         <button class="btn-primary" style="border-radius:12px;padding:10px 16px;font-size:13px;font-weight:700;justify-content:center;" @click="newProject">
@@ -202,6 +220,34 @@ function selectProject(id) {
           </template>
           <div v-else class="empty-state">
             <span class="material-symbols-outlined">groups</span>
+            <p>Kein Projekt ausgewählt. Wähle ein Projekt aus oder erstelle ein neues.</p>
+          </div>
+        </template>
+
+        <!-- Dashboard View -->
+        <template v-else-if="activeView === 'dashboard'">
+          <div v-if="activeProject">
+            <div class="estimation-header">
+              <h2 class="estimation-title">Dashboard — {{ activeProject.name }}</h2>
+            </div>
+            <DashboardView :project="activeProject" />
+          </div>
+          <div v-else class="empty-state">
+            <span class="material-symbols-outlined">dashboard</span>
+            <p>Kein Projekt ausgewählt. Wähle ein Projekt aus oder erstelle ein neues.</p>
+          </div>
+        </template>
+
+        <!-- Risks View -->
+        <template v-else-if="activeView === 'risks'">
+          <div v-if="activeProject">
+            <div class="estimation-header">
+              <h2 class="estimation-title">Risiken — {{ activeProject.name }}</h2>
+            </div>
+            <RiskManager :project="activeProject" />
+          </div>
+          <div v-else class="empty-state">
+            <span class="material-symbols-outlined">warning</span>
             <p>Kein Projekt ausgewählt. Wähle ein Projekt aus oder erstelle ein neues.</p>
           </div>
         </template>

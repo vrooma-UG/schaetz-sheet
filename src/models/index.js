@@ -17,6 +17,7 @@ export function createProject(name = 'Neues Projekt') {
       { id: crypto.randomUUID(), name: 'Develop', pm: 10, testing: 5, risk: 5, docs: 10, warranty: 10 },
     ],
     tasks: [],
+    risks: [],
   }
 }
 
@@ -39,5 +40,17 @@ export function createTask(packageName = '', roleId = '', typeId = '') {
     opt: 0,
     pess: 0,
     optional: false,
+  }
+}
+
+export function createRisk(name = '') {
+  return {
+    id: crypto.randomUUID(),
+    name,
+    description: '',
+    category: 'technical',
+    probability: 20,
+    impact: 0,
+    status: 'open',
   }
 }

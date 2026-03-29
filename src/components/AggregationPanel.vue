@@ -61,6 +61,7 @@ function factorInfo(factor) {
             <th>Min</th>
             <th>Mittel</th>
             <th>Max</th>
+            <th>Schätzfaktor</th>
           </tr>
         </thead>
         <tbody>
@@ -69,18 +70,42 @@ function factorInfo(factor) {
             <td class="agg-num">{{ fmtPT(agg.totals.gesamt.min) }}</td>
             <td class="agg-num">{{ fmtPT(agg.totals.gesamt.mittel) }}</td>
             <td class="agg-num">{{ fmtPT(agg.totals.gesamt.max) }}</td>
+            <td class="agg-num">
+              <span
+                v-if="agg.avgFactor !== null"
+                class="factor-badge"
+                :style="{ background: factorInfo(agg.avgFactor).bg, color: factorInfo(agg.avgFactor).color }"
+              >{{ agg.avgFactor.toFixed(2) }} — {{ factorInfo(agg.avgFactor).label }}</span>
+              <span v-else style="color:var(--outline)">—</span>
+            </td>
           </tr>
           <tr>
             <td>Ohne Optional</td>
             <td class="agg-num">{{ fmtPT(agg.totals.ohneOptional.min) }}</td>
             <td class="agg-num">{{ fmtPT(agg.totals.ohneOptional.mittel) }}</td>
             <td class="agg-num">{{ fmtPT(agg.totals.ohneOptional.max) }}</td>
+            <td class="agg-num">
+              <span
+                v-if="agg.avgFactorMandatory !== null"
+                class="factor-badge"
+                :style="{ background: factorInfo(agg.avgFactorMandatory).bg, color: factorInfo(agg.avgFactorMandatory).color }"
+              >{{ agg.avgFactorMandatory.toFixed(2) }} — {{ factorInfo(agg.avgFactorMandatory).label }}</span>
+              <span v-else style="color:var(--outline)">—</span>
+            </td>
           </tr>
           <tr>
             <td>Nur Optional</td>
             <td class="agg-num">{{ fmtPT(agg.totals.nurOptional.min) }}</td>
             <td class="agg-num">{{ fmtPT(agg.totals.nurOptional.mittel) }}</td>
             <td class="agg-num">{{ fmtPT(agg.totals.nurOptional.max) }}</td>
+            <td class="agg-num">
+              <span
+                v-if="agg.avgFactorOptional !== null"
+                class="factor-badge"
+                :style="{ background: factorInfo(agg.avgFactorOptional).bg, color: factorInfo(agg.avgFactorOptional).color }"
+              >{{ agg.avgFactorOptional.toFixed(2) }} — {{ factorInfo(agg.avgFactorOptional).label }}</span>
+              <span v-else style="color:var(--outline)">—</span>
+            </td>
           </tr>
         </tbody>
       </table>
