@@ -22,6 +22,10 @@ export function createRole(name = '', rate = 0) {
   return { id: crypto.randomUUID(), name, rate: Number(rate) }
 }
 
+export function createTaskType(name = '', markup = 0) {
+  return { id: crypto.randomUUID(), name, markup: Number(markup) }
+}
+
 export function createTask(packageName = '', roleId = '', typeId = '') {
   return {
     id: crypto.randomUUID(),
