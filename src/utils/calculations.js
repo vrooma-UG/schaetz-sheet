@@ -103,8 +103,27 @@ export function calcAggregations(tasks, roles, taskTypes) {
       .reduce((s, m) => s + m.costs, 0)
   }
 
-  const factorValues = allMetrics.map(m => m.factor).filter(f => f !== null)
-  const avgFactor = factorValues.length ? factorValues.reduce((s, f) => s + f, 0) / factorValues.length : null
+  function avgFactorOf(filter) {
+    const vals = allMetrics.filter(filter).map(m => m.factor).filter(f => f !== null)
+    return vals.length ? vals.reduce((s, f) => s + f, 0) / vals.length : null
+  }
 
-  return { totalEffort, totals, effortPerPackage, optionalEffort, costsPerRole, costsPerType, avgFactor }
+  const avgFactor = avgFactorOf(all)
+  const avgFactorMandatory = avgFactorOf(mandatory)
+  const avgFactorOptional = avgFactorOf(optional)
+
+  const effortPerType = {}
+  for (const type of taskTypes) {
+    effortPerType[type.name] = allMetrics
+      .filter(m => m.task.typeId === type.id)
+      .reduce((s, m) => s + m.totalEffort, 0)
+  }
+
+  const totalCosts = allMetrics.reduce((s, m) => s + m.costs, 0)
+
+  return {
+    totalEffort, totals, effortPerPackage, optionalEffort,
+    costsPerRole, costsPerType, effortPerType, totalCosts,
+    avgFactor, avgFactorMandatory, avgFactorOptional,
+  }
 }
