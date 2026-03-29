@@ -5,25 +5,48 @@ import { calcAggregations } from '../utils/calculations.js'
 const props = defineProps({ project: Object })
 
 const agg = computed(() => calcAggregations(props.project.tasks, props.project.roles, props.project.taskTypes))
+
+function fmtCost(val) {
+  if (!val) return '€0'
+  return new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'EUR', maximumFractionDigits: 0 }).format(val)
+}
 </script>
 
 <template>
-  <div class="card aggregations">
-    <h2>Aggregationen</h2>
-    <div class="agg-grid">
-      <div class="agg-block">
-        <h3>Gesamtaufwand</h3>
-        <p class="big">{{ agg.totalEffort.toFixed(2) }} PT</p>
+  <div class="aggregations">
+    <!-- Hero Stats Header -->
+    <div class="hero-section">
+      <div class="hero-stats">
+        <p class="hero-label">Gesamtaufwand</p>
+        <h2 class="hero-value">{{ agg.totalEffort.toFixed(2) }} PT</h2>
+        <p class="hero-sub">
+          Aggregiert über {{ project.tasks.length }} Aufgaben in {{ project.name }}.
+        </p>
       </div>
-      <div class="agg-block">
-        <h3>Min / MW / Max</h3>
-        <p>Min: {{ agg.minEffort.toFixed(2) }} PT</p>
-        <p>MW: {{ agg.avgEffort.toFixed(2) }} PT</p>
-        <p>Max: {{ agg.maxEffort.toFixed(2) }} PT</p>
+      <div class="stats-row">
+        <div class="stat-item">
+          <span class="stat-val">{{ agg.minEffort.toFixed(1) }}</span>
+          <span class="stat-lbl">Min PT</span>
+        </div>
+        <div class="stat-divider"></div>
+        <div class="stat-item">
+          <span class="stat-val">{{ agg.avgEffort.toFixed(1) }}</span>
+          <span class="stat-lbl">MW PT</span>
+        </div>
+        <div class="stat-divider"></div>
+        <div class="stat-item">
+          <span class="stat-val">{{ agg.maxEffort.toFixed(1) }}</span>
+          <span class="stat-lbl">Max PT</span>
+        </div>
       </div>
+    </div>
+
+    <!-- Detail Cards -->
+    <div class="agg-grid" style="margin-top:24px;">
       <div class="agg-block">
-        <h3>Aufwand optional</h3>
-        <p>{{ agg.optionalEffort.toFixed(2) }} PT</p>
+        <h3>Optional</h3>
+        <p class="big">{{ agg.optionalEffort.toFixed(2) }}</p>
+        <p>PT optionaler Aufwand</p>
       </div>
       <div class="agg-block">
         <h3>Aufwand je Paket</h3>

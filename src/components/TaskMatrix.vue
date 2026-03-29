@@ -30,58 +30,71 @@ function fmt(val) {
 </script>
 
 <template>
-  <div class="card task-matrix">
-    <div class="toolbar">
-      <h2>Aufgabenmatrix</h2>
-      <button @click="addTask">+ Aufgabe</button>
+  <div class="task-matrix">
+    <div class="section-header">
+      <span class="section-label">Aufgabenmatrix</span>
+      <button @click="addTask">
+        <span class="material-symbols-outlined" style="font-size:15px;">add</span>
+        Aufgabe
+      </button>
     </div>
-    <div class="table-scroll">
-      <table>
-        <thead>
-          <tr>
-            <th>Paket</th>
-            <th>Aufgabe</th>
-            <th>Beschreibung</th>
-            <th>Rolle</th>
-            <th>Typ</th>
-            <th>Opt</th>
-            <th>Pess</th>
-            <th>MW</th>
-            <th>Aufschlag</th>
-            <th>Gesamt PT</th>
-            <th>Kosten €</th>
-            <th>Faktor</th>
-            <th>Optional</th>
-            <th></th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr v-for="{ index, task, mw, markup, totalEffort, costs, factor } in enrichedTasks" :key="task.id">
-            <td><input v-model="project.tasks[index].package" /></td>
-            <td><input v-model="project.tasks[index].name" /></td>
-            <td><input v-model="project.tasks[index].description" /></td>
-            <td>
-              <select v-model="project.tasks[index].roleId">
-                <option v-for="r in project.roles" :key="r.id" :value="r.id">{{ r.name }}</option>
-              </select>
-            </td>
-            <td>
-              <select v-model="project.tasks[index].typeId">
-                <option v-for="tp in project.taskTypes" :key="tp.id" :value="tp.id">{{ tp.name }}</option>
-              </select>
-            </td>
-            <td><input v-model.number="project.tasks[index].opt" type="number" min="0" style="width:60px" /></td>
-            <td><input v-model.number="project.tasks[index].pess" type="number" min="0" style="width:60px" /></td>
-            <td class="calc">{{ fmt(mw) }}</td>
-            <td class="calc">{{ fmt(markup) }}</td>
-            <td class="calc bold">{{ fmt(totalEffort) }}</td>
-            <td class="calc">{{ fmt(costs) }}</td>
-            <td class="calc">{{ factor !== null ? fmt(factor) : '-' }}</td>
-            <td><input type="checkbox" v-model="project.tasks[index].optional" /></td>
-            <td><button class="danger" @click="removeTask(task.id)">✕</button></td>
-          </tr>
-        </tbody>
-      </table>
+    <div class="card" style="padding:0;overflow:hidden;">
+      <div class="table-scroll">
+        <table>
+          <thead>
+            <tr>
+              <th>Paket</th>
+              <th>Aufgabe</th>
+              <th>Beschreibung</th>
+              <th>Rolle</th>
+              <th>Typ</th>
+              <th>Opt</th>
+              <th>Pess</th>
+              <th>MW</th>
+              <th>Aufschlag</th>
+              <th>Gesamt PT</th>
+              <th>Kosten €</th>
+              <th>Faktor</th>
+              <th>Optional</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-for="{ index, task, mw, markup, totalEffort, costs, factor } in enrichedTasks" :key="task.id">
+              <td><input v-model="project.tasks[index].package" /></td>
+              <td><input v-model="project.tasks[index].name" /></td>
+              <td><input v-model="project.tasks[index].description" /></td>
+              <td>
+                <select v-model="project.tasks[index].roleId">
+                  <option v-for="r in project.roles" :key="r.id" :value="r.id">{{ r.name }}</option>
+                </select>
+              </td>
+              <td>
+                <select v-model="project.tasks[index].typeId">
+                  <option v-for="tp in project.taskTypes" :key="tp.id" :value="tp.id">{{ tp.name }}</option>
+                </select>
+              </td>
+              <td><input v-model.number="project.tasks[index].opt" type="number" min="0" style="width:60px" /></td>
+              <td><input v-model.number="project.tasks[index].pess" type="number" min="0" style="width:60px" /></td>
+              <td class="calc">{{ fmt(mw) }}</td>
+              <td class="calc">{{ fmt(markup) }}</td>
+              <td class="calc bold">{{ fmt(totalEffort) }}</td>
+              <td class="calc">{{ fmt(costs) }}</td>
+              <td class="calc">{{ factor !== null ? fmt(factor) : '-' }}</td>
+              <td style="text-align:center;"><input type="checkbox" v-model="project.tasks[index].optional" /></td>
+              <td>
+                <button class="danger" @click="removeTask(task.id)" style="padding:4px 6px;">
+                  <span class="material-symbols-outlined" style="font-size:15px;">close</span>
+                </button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div v-if="project.tasks.length === 0" style="padding:40px;text-align:center;color:var(--outline);">
+        <span class="material-symbols-outlined" style="font-size:32px;display:block;margin-bottom:8px;opacity:0.4;">table_rows</span>
+        Keine Aufgaben. Klicke auf „Aufgabe" um zu beginnen.
+      </div>
     </div>
   </div>
 </template>
