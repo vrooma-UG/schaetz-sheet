@@ -20,10 +20,11 @@ function fmtCost(val) {
 
 function factorInfo(factor) {
   if (factor === null || factor === undefined) return null
-  if (factor <= 0.25) return { label: 'Gut geschätzt', color: '#16a34a', bg: '#dcfce7' }
-  if (factor <= 0.5)  return { label: 'Akzeptabel',    color: '#65a30d', bg: '#ecfccb' }
-  if (factor <= 1.0)  return { label: 'Kritisch',      color: '#d97706', bg: '#fef3c7' }
-  return                      { label: 'Gefährlich',   color: '#dc2626', bg: '#fee2e2' }
+  if (factor <= 0.3) return { label: 'Sehr Gut',    color: '#16a34a', bg: '#dcfce7' }
+  if (factor <= 0.5) return { label: 'Gut',         color: '#16a34a', bg: '#dcfce7' }
+  if (factor <= 0.8) return { label: 'Akzeptabel',  color: '#65a30d', bg: '#ecfccb' }
+  if (factor <= 1.0) return { label: 'Kritisch',    color: '#d97706', bg: '#fef3c7' }
+  return                     { label: 'Gefährlich', color: '#dc2626', bg: '#fee2e2' }
 }
 
 const openRisksCount = computed(() => {
