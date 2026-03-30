@@ -27,6 +27,13 @@ function commitRename(p) {
 function cancelRename() {
   editingId.value = null
 }
+
+function confirmDelete(id, event) {
+  event.stopPropagation()
+  if (window.confirm('Projekt wirklich löschen? Diese Aktion kann nicht rückgängig gemacht werden.')) {
+    emit('delete', id)
+  }
+}
 </script>
 
 <template>
@@ -52,10 +59,10 @@ function cancelRename() {
           <div>
             <div class="project-card-header" style="margin-bottom:16px;">
               <span :class="['status-badge', p.id === activeProjectId ? 'active' : 'default']">
-                {{ p.id === activeProjectId ? 'Aktiv' : 'Inaktiv' }}
+                {{ p.id === activeProjectId ? 'Geöffnet' : 'Inaktiv' }}
               </span>
-              <button class="project-delete-btn" @click.stop="emit('delete', p.id)" title="Projekt löschen">
-                <span class="material-symbols-outlined" style="font-size:16px;">close</span>
+              <button class="project-delete-btn" @click="confirmDelete(p.id, $event)" title="Projekt löschen" aria-label="Projekt löschen">
+                <span class="material-symbols-outlined" style="font-size:16px;">delete</span>
               </button>
             </div>
             <div style="display:flex;align-items:center;gap:8px;">
@@ -107,10 +114,10 @@ function cancelRename() {
           <div>
             <div class="project-card-header">
               <span :class="['status-badge', p.id === activeProjectId ? 'active' : 'default']">
-                {{ p.id === activeProjectId ? 'Aktiv' : 'Inaktiv' }}
+                {{ p.id === activeProjectId ? 'Geöffnet' : 'Inaktiv' }}
               </span>
-              <button class="project-delete-btn" style="position:static;padding:4px;" @click.stop="emit('delete', p.id)" title="Projekt löschen">
-                <span class="material-symbols-outlined" style="font-size:16px;">close</span>
+              <button class="project-delete-btn" style="position:static;padding:4px;" @click="confirmDelete(p.id, $event)" title="Projekt löschen" aria-label="Projekt löschen">
+                <span class="material-symbols-outlined" style="font-size:16px;">delete</span>
               </button>
             </div>
             <div style="display:flex;align-items:center;gap:6px;margin-top:8px;">

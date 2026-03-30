@@ -26,7 +26,10 @@ function factorInfo(factor) {
   return                      { label: 'Gefährlich',   color: '#dc2626', bg: '#fee2e2' }
 }
 
-// ── Bar chart helpers ────────────────────────────────────────────────────────
+const openRisksCount = computed(() => {
+  if (!props.project.risks) return 0
+  return props.project.risks.filter(r => r.status === 'open').length
+})
 const BAR_COLORS = [
   '#2563eb', '#7c3aed', '#0891b2', '#16a34a', '#d97706',
   '#dc2626', '#db2777', '#059669', '#6366f1', '#f97316',
@@ -152,9 +155,16 @@ const costsByRoleSlices = computed(() => {
           </p>
         </div>
       </div>
+      <!-- Offene Risiken -->
+      <div class="kpi-card kpi-card--risks">
+        <span class="kpi-icon material-symbols-outlined">warning</span>
+        <div class="kpi-body">
+          <p class="kpi-label">Offene Risiken</p>
+          <p class="kpi-value">{{ openRisksCount }}</p>
+          <p class="kpi-sub">{{ project.risks?.length ?? 0 }} gesamt</p>
+        </div>
+      </div>
     </div>
-
-    <!-- Charts Row 1: Effort by Package + Costs by Package -->
     <div class="charts-grid">
       <div class="chart-card">
         <h3 class="chart-title">Aufwand je Paket (PT)</h3>
@@ -428,6 +438,11 @@ const costsByRoleSlices = computed(() => {
 .kpi-card--optional {
   border-color: #7c3aed44;
   background: #f5f3ff;
+}
+
+.kpi-card--risks {
+  border-color: #dc262644;
+  background: #fff1f2;
 }
 
 .kpi-body {

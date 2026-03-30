@@ -60,9 +60,9 @@ const openRisks = computed(() => risks.value.filter(r => r.status === 'open').le
           <p class="risk-kpi-value">{{ openRisks }}</p>
         </div>
       </div>
-      <div class="risk-kpi" style="margin-left:auto;">
-        <button class="btn-primary" style="border-radius:12px;padding:10px 16px;font-size:13px;font-weight:700;" @click="addRisk">
-          <span class="material-symbols-outlined" style="font-size:16px;">add</span>
+      <div style="margin-left:auto;">
+        <button @click="addRisk" aria-label="Risiko hinzufügen">
+          <span class="material-symbols-outlined" style="font-size:15px;">add</span>
           Risiko
         </button>
       </div>
@@ -117,7 +117,7 @@ const openRisks = computed(() => risks.value.filter(r => r.status === 'open').le
               </td>
               <td>
                 <button class="danger" @click="removeRisk(risk.id)" style="padding:4px 6px;">
-                  <span class="material-symbols-outlined" style="font-size:15px;">close</span>
+                  <span class="material-symbols-outlined" style="font-size:15px;">delete</span>
                 </button>
               </td>
             </tr>
