@@ -10,6 +10,7 @@ import AggregationPanel from './components/AggregationPanel.vue'
 import DashboardView from './components/DashboardView.vue'
 import RiskManager from './components/RiskManager.vue'
 import HelpModal from './components/HelpModal.vue'
+import { generateProjectPdf } from './utils/pdfExport.js'
 
 const projects = ref(loadProjects())
 const showHelp = ref(false)
@@ -80,6 +81,18 @@ function selectProject(id) {
   activeProjectId.value = id
   activeView.value = 'estimation'
 }
+
+const generatingPdf = ref(false)
+
+async function handlePdfExport() {
+  if (!activeProject.value || generatingPdf.value) return
+  generatingPdf.value = true
+  try {
+    await generateProjectPdf(activeProject.value)
+  } finally {
+    generatingPdf.value = false
+  }
+}
 </script>
 
 <template>
@@ -129,6 +142,15 @@ function selectProject(id) {
         >
           <span class="material-symbols-outlined">dashboard</span>
           Dashboard
+        </button>
+        <button
+          class="nav-btn nav-btn--pdf"
+          @click="handlePdfExport"
+          :disabled="!activeProject || generatingPdf"
+          :title="generatingPdf ? 'PDF wird erstellt…' : 'Komplettes Projekt als PDF exportieren'"
+        >
+          <span class="material-symbols-outlined">picture_as_pdf</span>
+          {{ generatingPdf ? 'Erstelle PDF…' : 'PDF erstellen' }}
         </button>
       </nav>
       <div class="sidebar-footer">
