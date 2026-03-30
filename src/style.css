@@ -89,9 +89,17 @@ body {
 
 .sidebar-brand h1 {
   font-size: 1rem;
-  font-weight: 900;
+  font-weight: 400;
   color: var(--on-surface);
   letter-spacing: -0.02em;
+}
+
+.sidebar-brand h1 .brand-bold {
+  font-weight: 900;
+}
+
+.sidebar-brand h1 .brand-light {
+  font-weight: 300;
 }
 
 .sidebar-brand p {

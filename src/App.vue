@@ -87,8 +87,8 @@ function selectProject(id) {
     <!-- Sidebar -->
     <aside class="sidebar">
       <div class="sidebar-brand">
-        <h1>MiseEnPlace</h1>
-        <p>Get your project mised</p>
+        <h1><span class="brand-bold">Mise</span><span class="brand-light">EnPlace</span></h1>
+        <p>Plan your project efforts</p>
       </div>
       <nav class="sidebar-nav">
         <button
