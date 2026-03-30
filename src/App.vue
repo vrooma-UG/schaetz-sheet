@@ -13,7 +13,7 @@ import HelpModal from './components/HelpModal.vue'
 
 const projects = ref(loadProjects())
 const showHelp = ref(false)
-const activeProjectId = ref(projects.value[0]?.id ?? null)
+const activeProjectId = ref(null)
 const activeView = ref('projects')
 
 const activeProject = computed(() => projects.value.find(p => p.id === activeProjectId.value) ?? null)
@@ -96,15 +96,7 @@ function selectProject(id) {
           @click="activeView = 'projects'"
         >
           <span class="material-symbols-outlined">folder_open</span>
-          Projekte
-        </button>
-        <button
-          :class="['nav-btn', { active: activeView === 'estimation' }]"
-          @click="activeView = 'estimation'"
-          :disabled="!activeProject"
-        >
-          <span class="material-symbols-outlined">calculate</span>
-          Schätzung
+          Projekt
         </button>
         <button
           :class="['nav-btn', { active: activeView === 'resources' }]"
@@ -115,12 +107,12 @@ function selectProject(id) {
           Ressourcen
         </button>
         <button
-          :class="['nav-btn', { active: activeView === 'dashboard' }]"
-          @click="activeView = 'dashboard'"
+          :class="['nav-btn', { active: activeView === 'estimation' }]"
+          @click="activeView = 'estimation'"
           :disabled="!activeProject"
         >
-          <span class="material-symbols-outlined">dashboard</span>
-          Dashboard
+          <span class="material-symbols-outlined">calculate</span>
+          Schätzung
         </button>
         <button
           :class="['nav-btn', { active: activeView === 'risks' }]"
@@ -129,6 +121,14 @@ function selectProject(id) {
         >
           <span class="material-symbols-outlined">warning</span>
           Risiken
+        </button>
+        <button
+          :class="['nav-btn', { active: activeView === 'dashboard' }]"
+          @click="activeView = 'dashboard'"
+          :disabled="!activeProject"
+        >
+          <span class="material-symbols-outlined">dashboard</span>
+          Dashboard
         </button>
       </nav>
       <div class="sidebar-footer">
@@ -156,9 +156,6 @@ function selectProject(id) {
     <div class="main-content">
       <!-- Top Header -->
       <header class="top-header">
-        <div class="header-left">
-          <span class="header-title">Mise En Place - Get your project mised</span>
-        </div>
         <div class="header-actions">
           <button @click="handleExport" :disabled="!activeProject">
             <span class="material-symbols-outlined" style="font-size:15px;">download</span>
@@ -233,9 +230,6 @@ function selectProject(id) {
         <!-- Dashboard View -->
         <template v-else-if="activeView === 'dashboard'">
           <div v-if="activeProject">
-            <div class="estimation-header">
-              <h2 class="estimation-title">Dashboard — {{ activeProject.name }}</h2>
-            </div>
             <DashboardView :project="activeProject" />
           </div>
           <div v-else class="empty-state">
@@ -247,9 +241,6 @@ function selectProject(id) {
         <!-- Risks View -->
         <template v-else-if="activeView === 'risks'">
           <div v-if="activeProject">
-            <div class="estimation-header">
-              <h2 class="estimation-title">Risiken — {{ activeProject.name }}</h2>
-            </div>
             <RiskManager :project="activeProject" />
           </div>
           <div v-else class="empty-state">
