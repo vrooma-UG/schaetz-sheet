@@ -11,6 +11,8 @@ import DashboardView from './components/DashboardView.vue'
 import RiskManager from './components/RiskManager.vue'
 import HelpModal from './components/HelpModal.vue'
 import { generateProjectPdf } from './utils/pdfExport.js'
+import LanguageSelector from './components/LanguageSelector.vue'
+import { t } from './i18n/index.js'
 
 const projects = ref(loadProjects())
 const showHelp = ref(false)
@@ -101,7 +103,7 @@ async function handlePdfExport() {
     <aside class="sidebar">
       <div class="sidebar-brand">
         <h1><span class="brand-bold">Mise</span><span class="brand-light">EnPlace</span></h1>
-        <p>Plan your project efforts</p>
+        <p>{{ t('sidebar.tagline') }}</p>
       </div>
       <nav class="sidebar-nav">
         <button
@@ -109,7 +111,7 @@ async function handlePdfExport() {
           @click="activeView = 'projects'"
         >
           <span class="material-symbols-outlined">folder_open</span>
-          Projekt
+          {{ t('nav.project') }}
         </button>
         <button
           :class="['nav-btn', { active: activeView === 'resources' }]"
@@ -117,7 +119,7 @@ async function handlePdfExport() {
           :disabled="!activeProject"
         >
           <span class="material-symbols-outlined">groups</span>
-          Ressourcen
+          {{ t('nav.resources') }}
         </button>
         <button
           :class="['nav-btn', { active: activeView === 'estimation' }]"
@@ -125,7 +127,7 @@ async function handlePdfExport() {
           :disabled="!activeProject"
         >
           <span class="material-symbols-outlined">calculate</span>
-          Schätzung
+          {{ t('nav.estimation') }}
         </button>
         <button
           :class="['nav-btn', { active: activeView === 'risks' }]"
@@ -133,7 +135,7 @@ async function handlePdfExport() {
           :disabled="!activeProject"
         >
           <span class="material-symbols-outlined">warning</span>
-          Risiken
+          {{ t('nav.risks') }}
         </button>
         <button
           :class="['nav-btn', { active: activeView === 'dashboard' }]"
@@ -141,36 +143,37 @@ async function handlePdfExport() {
           :disabled="!activeProject"
         >
           <span class="material-symbols-outlined">dashboard</span>
-          Dashboard
+          {{ t('nav.dashboard') }}
         </button>
         <button
           class="nav-btn nav-btn--pdf"
           @click="handlePdfExport"
           :disabled="!activeProject || generatingPdf"
-          :title="generatingPdf ? 'PDF wird erstellt…' : 'Komplettes Projekt als PDF exportieren'"
+          :title="generatingPdf ? t('sidebar.pdfCreating') : t('sidebar.pdfTitle')"
         >
           <span class="material-symbols-outlined">picture_as_pdf</span>
-          {{ generatingPdf ? 'Erstelle PDF…' : 'PDF erstellen' }}
+          {{ generatingPdf ? t('nav.pdfCreating') : t('nav.pdfCreate') }}
         </button>
       </nav>
       <div class="sidebar-footer">
         <button class="btn-primary" style="border-radius:12px;padding:10px 16px;font-size:13px;font-weight:700;justify-content:center;" @click="newProject">
           <span class="material-symbols-outlined" style="font-size:16px;">add</span>
-          Neues Projekt
+          {{ t('sidebar.newProject') }}
         </button>
         <button class="footer-nav-btn" @click="handleExport" :disabled="!activeProject">
           <span class="material-symbols-outlined">download</span>
-          Export
+          {{ t('sidebar.export') }}
         </button>
         <label class="footer-nav-btn" style="cursor:pointer;">
           <span class="material-symbols-outlined">upload</span>
-          Import
+          {{ t('sidebar.import') }}
           <input type="file" accept=".json" hidden @change="e => { const f = e.target.files[0]; if(f) handleImport(f); e.target.value = ''; }" />
         </label>
         <button class="footer-nav-btn" @click="showHelp = true">
           <span class="material-symbols-outlined">help</span>
-          Hilfe
+          {{ t('sidebar.help') }}
         </button>
+        <LanguageSelector />
       </div>
     </aside>
 
@@ -181,11 +184,11 @@ async function handlePdfExport() {
         <div class="header-actions">
           <button @click="handleExport" :disabled="!activeProject">
             <span class="material-symbols-outlined" style="font-size:15px;">download</span>
-            Export
+            {{ t('header.export') }}
           </button>
           <label class="btn" style="cursor:pointer;">
             <span class="material-symbols-outlined" style="font-size:15px;">upload</span>
-            Import
+            {{ t('header.import') }}
             <input type="file" accept=".json" hidden @change="e => { const f = e.target.files[0]; if(f) handleImport(f); e.target.value = ''; }" />
           </label>
         </div>
@@ -221,7 +224,7 @@ async function handlePdfExport() {
               </template>
               <template v-else>
                 <h2 class="estimation-title">{{ activeProject.name }}</h2>
-                <button class="rename-btn" @click="startEditProjectName" title="Projekt umbenennen">
+                <button class="rename-btn" @click="startEditProjectName" :title="t('project.renameTitle')">
                   <span class="material-symbols-outlined" style="font-size:16px;">edit</span>
                 </button>
               </template>
@@ -231,7 +234,7 @@ async function handlePdfExport() {
           </div>
           <div v-else class="empty-state">
             <span class="material-symbols-outlined">calculate</span>
-            <p>Kein Projekt ausgewählt. Wähle ein Projekt aus oder erstelle ein neues.</p>
+            <p>{{ t('empty.noProject') }}</p>
           </div>
         </template>
 
@@ -245,7 +248,7 @@ async function handlePdfExport() {
           </template>
           <div v-else class="empty-state">
             <span class="material-symbols-outlined">groups</span>
-            <p>Kein Projekt ausgewählt. Wähle ein Projekt aus oder erstelle ein neues.</p>
+            <p>{{ t('empty.noProject') }}</p>
           </div>
         </template>
 
@@ -256,7 +259,7 @@ async function handlePdfExport() {
           </div>
           <div v-else class="empty-state">
             <span class="material-symbols-outlined">dashboard</span>
-            <p>Kein Projekt ausgewählt. Wähle ein Projekt aus oder erstelle ein neues.</p>
+            <p>{{ t('empty.noProject') }}</p>
           </div>
         </template>
 
@@ -267,7 +270,7 @@ async function handlePdfExport() {
           </div>
           <div v-else class="empty-state">
             <span class="material-symbols-outlined">warning</span>
-            <p>Kein Projekt ausgewählt. Wähle ein Projekt aus oder erstelle ein neues.</p>
+            <p>{{ t('empty.noProject') }}</p>
           </div>
         </template>
       </section>

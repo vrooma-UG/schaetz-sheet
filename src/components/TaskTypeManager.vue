@@ -1,11 +1,12 @@
 <script setup>
 import { computed } from 'vue'
 import { createTaskType } from '../models/index.js'
+import { t } from '../i18n/index.js'
 
 const props = defineProps({ project: Object })
 
 function addTaskType() {
-  props.project.taskTypes.push(createTaskType('Neuer Typ'))
+  props.project.taskTypes.push(createTaskType(t('taskTypes.defaultName')))
 }
 
 function removeTaskType(id) {
@@ -34,23 +35,23 @@ const avgMarkups = computed(() => {
 <template>
   <div class="card">
     <div class="toolbar">
-      <h2>Aufgabentypen</h2>
+      <h2>{{ t('taskTypes.title') }}</h2>
       <button @click="addTaskType">
         <span class="material-symbols-outlined" style="font-size:15px;">add</span>
-        Typ
+        {{ t('taskTypes.addType') }}
       </button>
     </div>
     <div class="table-scroll">
       <table class="surcharge-matrix">
         <thead>
           <tr>
-            <th>Typ</th>
-            <th title="Projektmanagement">PM %</th>
-            <th title="Testing">Testing %</th>
-            <th title="Risiko">Risiko %</th>
-            <th title="Dokumentation">Doku %</th>
-            <th title="Gewährleistung">Gewährleistung %</th>
-            <th title="Gesamtaufschlag">Gesamt %</th>
+            <th>{{ t('taskTypes.colType') }}</th>
+            <th :title="t('taskTypes.tooltipPm')">{{ t('taskTypes.colPm') }}</th>
+            <th :title="t('taskTypes.tooltipTesting')">{{ t('taskTypes.colTesting') }}</th>
+            <th :title="t('taskTypes.tooltipRisk')">{{ t('taskTypes.colRisk') }}</th>
+            <th :title="t('taskTypes.tooltipDocs')">{{ t('taskTypes.colDocs') }}</th>
+            <th :title="t('taskTypes.tooltipWarranty')">{{ t('taskTypes.colWarranty') }}</th>
+            <th :title="t('taskTypes.tooltipTotal')">{{ t('taskTypes.colTotal') }}</th>
             <th></th>
           </tr>
         </thead>
@@ -70,7 +71,7 @@ const avgMarkups = computed(() => {
         </tbody>
         <tfoot v-if="project.taskTypes.length">
           <tr class="avg-row">
-            <td class="bold">Mittelwert</td>
+            <td class="bold">{{ t('taskTypes.average') }}</td>
             <td class="calc">{{ avgMarkups.pm.toFixed(1) }} %</td>
             <td class="calc">{{ avgMarkups.testing.toFixed(1) }} %</td>
             <td class="calc">{{ avgMarkups.risk.toFixed(1) }} %</td>

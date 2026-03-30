@@ -1,10 +1,11 @@
 <script setup>
 import { createRole } from '../models/index.js'
+import { t } from '../i18n/index.js'
 
 const props = defineProps({ project: Object })
 
 function addRole() {
-  props.project.roles.push(createRole('Neue Rolle', 0))
+  props.project.roles.push(createRole(t('roles.defaultName'), 0))
 }
 
 function removeRole(id) {
@@ -16,17 +17,17 @@ function removeRole(id) {
 <template>
   <div class="card">
     <div class="toolbar">
-      <h2>Rollen</h2>
+      <h2>{{ t('roles.title') }}</h2>
       <button @click="addRole">
         <span class="material-symbols-outlined" style="font-size:15px;">add</span>
-        Rolle
+        {{ t('roles.addRole') }}
       </button>
     </div>
     <table>
       <thead>
         <tr>
-          <th>Name</th>
-          <th>Tagessatz (€)</th>
+          <th>{{ t('roles.name') }}</th>
+          <th>{{ t('roles.dailyRate') }}</th>
           <th></th>
         </tr>
       </thead>

@@ -2,6 +2,7 @@
 import { computed } from 'vue'
 import { createTask } from '../models/index.js'
 import { calcTaskMetrics } from '../utils/calculations.js'
+import { t } from '../i18n/index.js'
 
 const props = defineProps({ project: Object })
 
@@ -49,10 +50,10 @@ function fmtCost(val) {
 <template>
   <div class="task-matrix">
     <div class="section-header">
-      <span class="section-label">Aufgabenmatrix</span>
+      <span class="section-label">{{ t('taskMatrix.title') }}</span>
       <button @click="addTask">
         <span class="material-symbols-outlined" style="font-size:15px;">add</span>
-        Aufgabe
+        {{ t('taskMatrix.addTask') }}
       </button>
     </div>
     <div class="card" style="padding:0;overflow:hidden;">
@@ -61,19 +62,19 @@ function fmtCost(val) {
           <thead>
             <tr>
               <th></th>
-              <th>Paket</th>
-              <th>Aufgabe</th>
-              <th>Beschreibung</th>
-              <th>Rolle</th>
-              <th>Typ</th>
-              <th>Opt</th>
-              <th>Pess</th>
-              <th>MW</th>
-              <th>Aufschlag</th>
-              <th>Gesamt PT</th>
-              <th>Kosten</th>
-              <th>Faktor</th>
-              <th>Optional</th>
+              <th>{{ t('taskMatrix.colPackage') }}</th>
+              <th>{{ t('taskMatrix.colTask') }}</th>
+              <th>{{ t('taskMatrix.colDescription') }}</th>
+              <th>{{ t('taskMatrix.colRole') }}</th>
+              <th>{{ t('taskMatrix.colType') }}</th>
+              <th>{{ t('taskMatrix.colOpt') }}</th>
+              <th>{{ t('taskMatrix.colPess') }}</th>
+              <th>{{ t('taskMatrix.colMw') }}</th>
+              <th>{{ t('taskMatrix.colMarkup') }}</th>
+              <th>{{ t('taskMatrix.colTotalPt') }}</th>
+              <th>{{ t('taskMatrix.colCosts') }}</th>
+              <th>{{ t('taskMatrix.colFactor') }}</th>
+              <th>{{ t('taskMatrix.colOptional') }}</th>
               <th></th>
             </tr>
           </thead>
@@ -84,7 +85,7 @@ function fmtCost(val) {
                   @click="moveTask(task.id, -1)"
                   :disabled="index === 0"
                   style="padding:2px 5px;border-radius:6px;"
-                  title="Nach oben"
+                  :title="t('taskMatrix.moveUp')"
                 >
                   <span class="material-symbols-outlined" style="font-size:13px;">arrow_upward</span>
                 </button>
@@ -92,7 +93,7 @@ function fmtCost(val) {
                   @click="moveTask(task.id, 1)"
                   :disabled="index === enrichedTasks.length - 1"
                   style="padding:2px 5px;border-radius:6px;"
-                  title="Nach unten"
+                  :title="t('taskMatrix.moveDown')"
                 >
                   <span class="material-symbols-outlined" style="font-size:13px;">arrow_downward</span>
                 </button>
@@ -134,7 +135,7 @@ function fmtCost(val) {
       </div>
       <div v-if="project.tasks.length === 0" style="padding:40px;text-align:center;color:var(--outline);">
         <span class="material-symbols-outlined" style="font-size:32px;display:block;margin-bottom:8px;opacity:0.4;">table_rows</span>
-        Keine Aufgaben. Klicke auf „Aufgabe" um zu beginnen.
+        {{ t('taskMatrix.empty') }}
       </div>
     </div>
   </div>

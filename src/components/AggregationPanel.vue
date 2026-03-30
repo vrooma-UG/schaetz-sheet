@@ -1,6 +1,7 @@
 <script setup>
 import { computed } from 'vue'
 import { calcAggregations } from '../utils/calculations.js'
+import { t } from '../i18n/index.js'
 
 const props = defineProps({ project: Object })
 
@@ -16,11 +17,11 @@ function fmtPT(val) {
 
 function factorInfo(factor) {
   if (factor === null) return null
-  if (factor <= 0.3) return { label: 'Sehr Gut',    color: '#16a34a', bg: '#dcfce7' }
-  if (factor <= 0.5) return { label: 'Gut',         color: '#16a34a', bg: '#dcfce7' }
-  if (factor <= 0.8) return { label: 'Akzeptabel',  color: '#65a30d', bg: '#ecfccb' }
-  if (factor <= 1.0) return { label: 'Kritisch',    color: '#d97706', bg: '#fef3c7' }
-  return                     { label: 'Gefährlich', color: '#dc2626', bg: '#fee2e2' }
+  if (factor <= 0.3) return { label: t('aggregation.factorVeryGood'), color: '#16a34a', bg: '#dcfce7' }
+  if (factor <= 0.5) return { label: t('aggregation.factorGood'),     color: '#16a34a', bg: '#dcfce7' }
+  if (factor <= 0.8) return { label: t('aggregation.factorAcceptable'), color: '#65a30d', bg: '#ecfccb' }
+  if (factor <= 1.0) return { label: t('aggregation.factorCritical'),  color: '#d97706', bg: '#fef3c7' }
+  return                     { label: t('aggregation.factorDangerous'), color: '#dc2626', bg: '#fee2e2' }
 }
 </script>
 
@@ -29,10 +30,10 @@ function factorInfo(factor) {
     <!-- Hero Stats Header -->
     <div class="hero-section">
       <div class="hero-stats">
-        <p class="hero-label">Gesamtaufwand</p>
+        <p class="hero-label">{{ t('aggregation.totalEffort') }}</p>
         <h2 class="hero-value">{{ fmtPT(agg.totalEffort) }} PT</h2>
         <p class="hero-sub">
-          Aggregiert über {{ project.tasks.length }} Aufgaben in {{ project.name }}.
+          {{ t('aggregation.aggregatedOver') }} {{ project.tasks.length }} {{ t('aggregation.tasks') }} {{ project.name }}.
         </p>
       </div>
       <div class="stats-row">
@@ -41,7 +42,7 @@ function factorInfo(factor) {
             <span class="stat-val" :style="{ color: factorInfo(agg.avgFactor)?.color }">
               {{ agg.avgFactor.toFixed(2) }}
             </span>
-            <span class="stat-lbl">Schätzfaktor</span>
+            <span class="stat-lbl">{{ t('aggregation.estimationFactor') }}</span>
             <span
               v-if="factorInfo(agg.avgFactor)"
               class="factor-badge"
@@ -54,20 +55,20 @@ function factorInfo(factor) {
 
     <!-- Totals Table -->
     <div class="agg-block" style="margin-top:24px;">
-      <h3>Aufwand Übersicht (PT)</h3>
+      <h3>{{ t('aggregation.effortOverview') }}</h3>
       <table class="totals-table">
         <thead>
           <tr>
             <th></th>
-            <th>Min</th>
-            <th>Mittel</th>
-            <th>Max</th>
-            <th>Schätzfaktor</th>
+            <th>{{ t('aggregation.colMin') }}</th>
+            <th>{{ t('aggregation.colMittel') }}</th>
+            <th>{{ t('aggregation.colMax') }}</th>
+            <th>{{ t('aggregation.colFactor') }}</th>
           </tr>
         </thead>
         <tbody>
           <tr>
-            <td>Gesamt</td>
+            <td>{{ t('aggregation.rowTotal') }}</td>
             <td class="agg-num">{{ fmtPT(agg.totals.gesamt.min) }}</td>
             <td class="agg-num">{{ fmtPT(agg.totals.gesamt.mittel) }}</td>
             <td class="agg-num">{{ fmtPT(agg.totals.gesamt.max) }}</td>
@@ -81,7 +82,7 @@ function factorInfo(factor) {
             </td>
           </tr>
           <tr>
-            <td>Ohne Optional</td>
+            <td>{{ t('aggregation.rowWithoutOptional') }}</td>
             <td class="agg-num">{{ fmtPT(agg.totals.ohneOptional.min) }}</td>
             <td class="agg-num">{{ fmtPT(agg.totals.ohneOptional.mittel) }}</td>
             <td class="agg-num">{{ fmtPT(agg.totals.ohneOptional.max) }}</td>
@@ -95,7 +96,7 @@ function factorInfo(factor) {
             </td>
           </tr>
           <tr>
-            <td>Nur Optional</td>
+            <td>{{ t('aggregation.rowOnlyOptional') }}</td>
             <td class="agg-num">{{ fmtPT(agg.totals.nurOptional.min) }}</td>
             <td class="agg-num">{{ fmtPT(agg.totals.nurOptional.mittel) }}</td>
             <td class="agg-num">{{ fmtPT(agg.totals.nurOptional.max) }}</td>
@@ -115,16 +116,16 @@ function factorInfo(factor) {
     <!-- Detail Cards -->
     <div class="agg-grid" style="margin-top:24px;">
       <div class="agg-block">
-        <h3>Aufwand je Paket</h3>
+        <h3>{{ t('aggregation.effortPerPackage') }}</h3>
         <table>
           <tr v-for="(val, key) in agg.effortPerPackage" :key="key">
-            <td>{{ key || '(kein Paket)' }}</td>
+            <td>{{ key || t('aggregation.noPackage') }}</td>
             <td class="agg-num">{{ fmtPT(val) }} PT</td>
           </tr>
         </table>
       </div>
       <div class="agg-block">
-        <h3>Aufwand je Rolle</h3>
+        <h3>{{ t('aggregation.effortPerRole') }}</h3>
         <table>
           <tr v-for="(val, key) in agg.effortPerRole" :key="key">
             <td>{{ key }}</td>
@@ -133,7 +134,7 @@ function factorInfo(factor) {
         </table>
       </div>
       <div class="agg-block">
-        <h3>Aufwand je Typ</h3>
+        <h3>{{ t('aggregation.effortPerType') }}</h3>
         <table>
           <tr v-for="(val, key) in agg.effortPerType" :key="key">
             <td>{{ key }}</td>

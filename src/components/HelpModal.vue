@@ -1,4 +1,5 @@
 <script setup>
+import { t } from '../i18n/index.js'
 defineEmits(['close'])
 </script>
 
@@ -9,9 +10,9 @@ defineEmits(['close'])
       <div class="help-header">
         <div class="help-header-left">
           <span class="material-symbols-outlined" style="font-size:24px;color:var(--primary);">help</span>
-          <h2 id="help-title">So funktioniert MiseEnPlace</h2>
+          <h2 id="help-title">{{ t('help.title') }}</h2>
         </div>
-        <button class="help-close" @click="$emit('close')" aria-label="Hilfe schließen">
+        <button class="help-close" @click="$emit('close')" :aria-label="t('help.closeLabel')">
           <span class="material-symbols-outlined">close</span>
         </button>
       </div>
@@ -19,102 +20,99 @@ defineEmits(['close'])
       <!-- Body -->
       <div class="help-body">
         <!-- Intro -->
-        <p class="help-intro">
-          MiseEnPlace ist ein webbasiertes Werkzeug zur strukturierten Aufwandsschätzung und Risikobewertung für Projekte.
-          Alle Daten werden lokal in deinem Browser gespeichert – es findet keine Übertragung an einen Server statt.
-        </p>
+        <p class="help-intro">{{ t('help.intro') }}</p>
 
         <!-- Workflow overview -->
         <div class="help-steps">
           <div class="help-step">
             <span class="help-step-number">1</span>
             <div>
-              <strong>Projekt anlegen</strong>
-              <p>Erstelle ein neues Projekt oder importiere ein vorhandenes JSON-File.</p>
+              <strong>{{ t('help.step1Title') }}</strong>
+              <p>{{ t('help.step1Desc') }}</p>
             </div>
           </div>
           <div class="help-step">
             <span class="help-step-number">2</span>
             <div>
-              <strong>Ressourcen konfigurieren</strong>
-              <p>Definiere Rollen (mit Stundensatz) und Aufgabentypen (mit Aufschlägen).</p>
+              <strong>{{ t('help.step2Title') }}</strong>
+              <p>{{ t('help.step2Desc') }}</p>
             </div>
           </div>
           <div class="help-step">
             <span class="help-step-number">3</span>
             <div>
-              <strong>Aufgaben schätzen</strong>
-              <p>Trage optimistische und pessimistische Aufwände pro Task ein. MiseEnPlace berechnet den Mittelwert und die Gesamtkosten automatisch.</p>
+              <strong>{{ t('help.step3Title') }}</strong>
+              <p>{{ t('help.step3Desc') }}</p>
             </div>
           </div>
           <div class="help-step">
             <span class="help-step-number">4</span>
             <div>
-              <strong>Risiken erfassen</strong>
-              <p>Dokumentiere Projektrisiken mit Eintrittswahrscheinlichkeit und Auswirkung.</p>
+              <strong>{{ t('help.step4Title') }}</strong>
+              <p>{{ t('help.step4Desc') }}</p>
             </div>
           </div>
           <div class="help-step">
             <span class="help-step-number">5</span>
             <div>
-              <strong>Dashboard auswerten</strong>
-              <p>Verschaffe dir einen Überblick über Aufwand, Kosten und Varianzfaktoren pro Paket, Rolle und Aufgabentyp.</p>
+              <strong>{{ t('help.step5Title') }}</strong>
+              <p>{{ t('help.step5Desc') }}</p>
             </div>
           </div>
         </div>
 
         <div class="help-sections">
-          <!-- Projekte -->
+          <!-- Projects -->
           <details class="help-section" open>
             <summary class="help-section-title">
               <span class="material-symbols-outlined">folder_open</span>
-              Projekte
+              {{ t('help.secProjects') }}
             </summary>
             <div class="help-section-body">
               <ul>
-                <li>Klicke auf <strong>„Neues Projekt"</strong> um ein leeres Projekt anzulegen.</li>
-                <li>Wähle ein bestehendes Projekt aus der Liste aus, um es zu öffnen.</li>
-                <li>Projekte können über das <strong>Stift-Symbol</strong> umbenannt werden.</li>
-                <li>Mit <strong>„Export"</strong> wird das aktive Projekt als JSON-Datei heruntergeladen.</li>
-                <li>Mit <strong>„Import"</strong> kannst du eine zuvor exportierte JSON-Datei wieder einlesen.</li>
+                <li v-html="t('help.projLi1')"></li>
+                <li v-html="t('help.projLi2')"></li>
+                <li v-html="t('help.projLi3')"></li>
+                <li v-html="t('help.projLi4')"></li>
+                <li v-html="t('help.projLi5')"></li>
               </ul>
             </div>
           </details>
 
-          <!-- Schätzung -->
+          <!-- Estimation -->
           <details class="help-section">
             <summary class="help-section-title">
               <span class="material-symbols-outlined">calculate</span>
-              Schätzung
+              {{ t('help.secEstimation') }}
             </summary>
             <div class="help-section-body">
               <ul>
-                <li>Jede Zeile repräsentiert eine <strong>Aufgabe (Task)</strong> mit Name, Paket, Rolle und Aufgabentyp.</li>
-                <li>Gib einen <strong>optimistischen</strong> und einen <strong>pessimistischen</strong> Aufwand in Personentagen (PT) ein.</li>
-                <li>Der <strong>Mittelwert (MW)</strong> wird als einfacher Durchschnitt berechnet: <em>(Opt + Pess) / 2</em>.</li>
-                <li>Der <strong>Aufschlag-Faktor</strong> ergibt sich aus den konfigurierten Aufgabentypen (Ressourcen-Ansicht).</li>
-                <li>Die <strong>Kosten</strong> berechnen sich aus MW × Faktor × Stundensatz der Rolle.</li>
-                <li>Das <strong>Aggregations-Panel</strong> oben zeigt Gesamtaufwand und -kosten auf einen Blick.</li>
+                <li v-html="t('help.estLi1')"></li>
+                <li v-html="t('help.estLi2')"></li>
+                <li v-html="t('help.estLi3')"></li>
+                <li v-html="t('help.estLi4')"></li>
+                <li v-html="t('help.estLi5')"></li>
+                <li v-html="t('help.estLi6')"></li>
               </ul>
             </div>
           </details>
 
-          <!-- Ressourcen -->
+          <!-- Resources -->
           <details class="help-section">
             <summary class="help-section-title">
               <span class="material-symbols-outlined">groups</span>
-              Ressourcen
+              {{ t('help.secResources') }}
             </summary>
             <div class="help-section-body">
-              <p><strong>Rollen:</strong></p>
+              <p><strong>{{ t('help.resRoles') }}</strong></p>
               <ul>
-                <li>Lege Rollen (z. B. „Senior Developer", „QA") mit einem täglichen Stundensatz (€/Tag) an.</li>
-                <li>Jede Aufgabe in der Schätzung wird einer Rolle zugeordnet.</li>
+                <li v-html="t('help.resRolesLi1')"></li>
+                <li v-html="t('help.resRolesLi2')"></li>
               </ul>
-              <p style="margin-top:8px;"><strong>Aufgabentypen:</strong></p>
+              <p style="margin-top:8px;"><strong>{{ t('help.resTaskTypes') }}</strong></p>
               <ul>
-                <li>Definiere Aufgabentypen (z. B. „Feature", „Bugfix") mit prozentualen Aufschlägen für PM, Testing, Risiko, Dokumentation und Gewährleistung.</li>
-                <li>Der resultierende Faktor wird auf den geschätzten Aufwand addiert, um den Gesamtaufwand zu ermitteln.</li>
+                <li v-html="t('help.resTaskTypesLi1')"></li>
+                <li v-html="t('help.resTaskTypesLi2')"></li>
               </ul>
             </div>
           </details>
@@ -123,28 +121,28 @@ defineEmits(['close'])
           <details class="help-section">
             <summary class="help-section-title">
               <span class="material-symbols-outlined">dashboard</span>
-              Dashboard
+              {{ t('help.secDashboard') }}
             </summary>
             <div class="help-section-body">
               <ul>
-                <li>Das Dashboard zeigt Aufwand und Kosten gegliedert nach <strong>Paketen</strong>, <strong>Aufgabentypen</strong> und <strong>Rollen</strong>.</li>
-                <li>Der <strong>Varianzfaktor</strong> (Pess/Opt-Verhältnis) gibt an, wie stark die Schätzungen streuen – je niedriger, desto sicherer die Schätzung.</li>
-                <li>Balkendiagramme visualisieren die Verteilung der Kosten und helfen, Kostentreiber schnell zu erkennen.</li>
+                <li v-html="t('help.dashLi1')"></li>
+                <li v-html="t('help.dashLi2')"></li>
+                <li v-html="t('help.dashLi3')"></li>
               </ul>
             </div>
           </details>
 
-          <!-- Risiken -->
+          <!-- Risks -->
           <details class="help-section">
             <summary class="help-section-title">
               <span class="material-symbols-outlined">warning</span>
-              Risiken
+              {{ t('help.secRisks') }}
             </summary>
             <div class="help-section-body">
               <ul>
-                <li>Risiken sind rein textuelle Einträge, die dem Vertrieb helfen, im Angebot klare <strong>Abgrenzungen</strong> vorzunehmen.</li>
-                <li>Füge Risiken mit <strong>Kategorie</strong> (Technisch, Organisatorisch, Extern, Finanziell), <strong>Eintrittswahrscheinlichkeit</strong> und <strong>Auswirkung</strong> hinzu.</li>
-                <li>Setze den Status eines Risikos auf <strong>„Mitigiert"</strong> oder <strong>„Geschlossen"</strong>, sobald Maßnahmen umgesetzt wurden.</li>
+                <li v-html="t('help.riskLi1')"></li>
+                <li v-html="t('help.riskLi2')"></li>
+                <li v-html="t('help.riskLi3')"></li>
               </ul>
             </div>
           </details>
@@ -153,13 +151,13 @@ defineEmits(['close'])
           <details class="help-section">
             <summary class="help-section-title">
               <span class="material-symbols-outlined">sync_alt</span>
-              Import &amp; Export
+              {{ t('help.secImportExport') }}
             </summary>
             <div class="help-section-body">
               <ul>
-                <li>Projekte werden automatisch im <strong>Browser-Speicher (localStorage)</strong> gesichert – auch nach dem Schließen des Tabs.</li>
-                <li>Mit <strong>„Export"</strong> lädst du das aktive Projekt als <code>.json</code>-Datei herunter, um es zu teilen oder zu archivieren.</li>
-                <li>Mit <strong>„Import"</strong> lädst du eine exportierte Datei und öffnest sie als neues Projekt.</li>
+                <li v-html="t('help.ieLi1')"></li>
+                <li v-html="t('help.ieLi2')"></li>
+                <li v-html="t('help.ieLi3')"></li>
               </ul>
             </div>
           </details>
@@ -169,7 +167,7 @@ defineEmits(['close'])
       <!-- Footer -->
       <div class="help-footer">
         <button class="btn-primary" style="border-radius:10px;" @click="$emit('close')">
-          Verstanden
+          {{ t('help.understood') }}
         </button>
       </div>
     </div>
