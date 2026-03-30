@@ -9,7 +9,7 @@ export default {
     pdfCreating: 'Erstelle PDF…',
   },
   sidebar: {
-    tagline: 'Plan your project efforts',
+    tagline: 'Projektaufwände planen',
     newProject: 'Neues Projekt',
     export: 'Export',
     import: 'Import',
