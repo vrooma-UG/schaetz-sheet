@@ -16,6 +16,31 @@ const projects = ref(loadProjects())
 const showHelp = ref(false)
 const activeProjectId = ref(null)
 const activeView = ref('projects')
+const sidebarOpen = ref(false)
+
+function closeSidebar() {
+  sidebarOpen.value = false
+}
+
+function navigate(view) {
+  activeView.value = view
+  closeSidebar()
+}
+
+function handleNewProject() {
+  newProject()
+  closeSidebar()
+}
+
+function handlePdfExportAndClose() {
+  handlePdfExport()
+  closeSidebar()
+}
+
+function openHelpAndClose() {
+  showHelp.value = true
+  closeSidebar()
+}
 
 const activeProject = computed(() => projects.value.find(p => p.id === activeProjectId.value) ?? null)
 
@@ -80,6 +105,7 @@ function renameProject(id, name) {
 function selectProject(id) {
   activeProjectId.value = id
   activeView.value = 'estimation'
+  closeSidebar()
 }
 
 const generatingPdf = ref(false)
@@ -97,23 +123,29 @@ async function handlePdfExport() {
 
 <template>
   <div id="app">
+    <!-- Sidebar Overlay (mobile) -->
+    <div class="sidebar-overlay" :class="{ 'sidebar-overlay--visible': sidebarOpen }" @click="closeSidebar"></div>
+
     <!-- Sidebar -->
-    <aside class="sidebar">
+    <aside class="sidebar" :class="{ 'sidebar--open': sidebarOpen }">
       <div class="sidebar-brand">
         <h1><span class="brand-bold">Mise</span><span class="brand-light">EnPlace</span></h1>
         <p>Plan your project efforts</p>
+        <button class="sidebar-close-btn" @click="closeSidebar" aria-label="Menü schließen">
+          <span class="material-symbols-outlined">close</span>
+        </button>
       </div>
       <nav class="sidebar-nav">
         <button
           :class="['nav-btn', { active: activeView === 'projects' }]"
-          @click="activeView = 'projects'"
+          @click="navigate('projects')"
         >
           <span class="material-symbols-outlined">folder_open</span>
           Projekt
         </button>
         <button
           :class="['nav-btn', { active: activeView === 'resources' }]"
-          @click="activeView = 'resources'"
+          @click="navigate('resources')"
           :disabled="!activeProject"
         >
           <span class="material-symbols-outlined">groups</span>
@@ -121,7 +153,7 @@ async function handlePdfExport() {
         </button>
         <button
           :class="['nav-btn', { active: activeView === 'estimation' }]"
-          @click="activeView = 'estimation'"
+          @click="navigate('estimation')"
           :disabled="!activeProject"
         >
           <span class="material-symbols-outlined">calculate</span>
@@ -129,7 +161,7 @@ async function handlePdfExport() {
         </button>
         <button
           :class="['nav-btn', { active: activeView === 'risks' }]"
-          @click="activeView = 'risks'"
+          @click="navigate('risks')"
           :disabled="!activeProject"
         >
           <span class="material-symbols-outlined">warning</span>
@@ -137,7 +169,7 @@ async function handlePdfExport() {
         </button>
         <button
           :class="['nav-btn', { active: activeView === 'dashboard' }]"
-          @click="activeView = 'dashboard'"
+          @click="navigate('dashboard')"
           :disabled="!activeProject"
         >
           <span class="material-symbols-outlined">dashboard</span>
@@ -145,7 +177,7 @@ async function handlePdfExport() {
         </button>
         <button
           class="nav-btn nav-btn--pdf"
-          @click="handlePdfExport"
+          @click="handlePdfExportAndClose"
           :disabled="!activeProject || generatingPdf"
           :title="generatingPdf ? 'PDF wird erstellt…' : 'Komplettes Projekt als PDF exportieren'"
         >
@@ -154,7 +186,7 @@ async function handlePdfExport() {
         </button>
       </nav>
       <div class="sidebar-footer">
-        <button class="btn-primary" style="border-radius:12px;padding:10px 16px;font-size:13px;font-weight:700;justify-content:center;" @click="newProject">
+        <button class="btn-primary" style="border-radius:12px;padding:10px 16px;font-size:13px;font-weight:700;justify-content:center;" @click="handleNewProject">
           <span class="material-symbols-outlined" style="font-size:16px;">add</span>
           Neues Projekt
         </button>
@@ -167,7 +199,7 @@ async function handlePdfExport() {
           Import
           <input type="file" accept=".json" hidden @change="e => { const f = e.target.files[0]; if(f) handleImport(f); e.target.value = ''; }" />
         </label>
-        <button class="footer-nav-btn" @click="showHelp = true">
+        <button class="footer-nav-btn" @click="openHelpAndClose">
           <span class="material-symbols-outlined">help</span>
           Hilfe
         </button>
@@ -178,6 +210,9 @@ async function handlePdfExport() {
     <div class="main-content">
       <!-- Top Header -->
       <header class="top-header">
+        <button class="hamburger-btn" @click="sidebarOpen = true" aria-label="Menü öffnen">
+          <span class="material-symbols-outlined">menu</span>
+        </button>
         <div class="header-actions">
           <button @click="handleExport" :disabled="!activeProject">
             <span class="material-symbols-outlined" style="font-size:15px;">download</span>

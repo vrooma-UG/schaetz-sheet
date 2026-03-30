@@ -80,11 +80,13 @@ body {
   flex-direction: column;
   padding: 24px 16px;
   overflow-y: auto;
+  transition: transform 0.25s ease;
 }
 
 .sidebar-brand {
   margin-bottom: 32px;
   padding: 0 8px;
+  position: relative;
 }
 
 .sidebar-brand h1 {
@@ -828,11 +830,90 @@ label.btn {
 
 @media (max-width: 768px) {
   .sidebar { transform: translateX(-100%); }
+  .sidebar--open { transform: translateX(0); }
   .main-content { margin-left: 0; }
   .grid-2 { grid-template-columns: 1fr; }
   .content-section { padding: 16px; }
   .project-grid { grid-template-columns: 1fr; }
   .project-card-featured { grid-column: span 1; }
   .hero-section { flex-direction: column; align-items: flex-start; }
+  .hamburger-btn { display: flex; }
+  .sidebar-close-btn { display: flex; }
+}
+
+/* ─── Hamburger Button ────────────────────────────────────────────────────── */
+.hamburger-btn {
+  display: none;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  border: none;
+  border-radius: 8px;
+  padding: 6px;
+  cursor: pointer;
+  color: var(--on-surface-variant);
+  transition: background 0.15s, color 0.15s;
+  margin-right: 8px;
+}
+
+.hamburger-btn:hover {
+  background: var(--surface-container);
+  color: var(--on-surface);
+}
+
+.hamburger-btn .material-symbols-outlined {
+  font-size: 24px;
+}
+
+/* ─── Sidebar Close Button (mobile only) ─────────────────────────────────── */
+.sidebar-close-btn {
+  display: none;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  border: none;
+  border-radius: 8px;
+  padding: 4px;
+  cursor: pointer;
+  color: var(--on-surface-variant);
+  transition: background 0.15s, color 0.15s;
+  position: absolute;
+  top: 20px;
+  right: 12px;
+}
+
+.sidebar-close-btn:hover {
+  background: var(--surface-container);
+  color: var(--on-surface);
+}
+
+.sidebar-close-btn .material-symbols-outlined {
+  font-size: 20px;
+}
+
+/* ─── Sidebar Overlay (mobile) ───────────────────────────────────────────── */
+.sidebar-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.4);
+  z-index: 19;
+  opacity: 0;
+  transition: opacity 0.25s ease;
+}
+
+.sidebar-overlay--visible {
+  opacity: 1;
+}
+
+@media (max-width: 768px) {
+  .sidebar-overlay {
+    display: block;
+    pointer-events: none;
+  }
+
+  .sidebar-overlay--visible {
+    pointer-events: auto;
+  }
 }
 
