@@ -1,5 +1,6 @@
 <script setup>
 import { ref } from 'vue'
+import { t } from '../i18n/index.js'
 
 const props = defineProps({
   projects: Array,
@@ -30,7 +31,7 @@ function cancelRename() {
 
 function confirmDelete(id, event) {
   event.stopPropagation()
-  if (window.confirm('Projekt wirklich löschen? Diese Aktion kann nicht rückgängig gemacht werden.')) {
+  if (window.confirm(t('project.deleteConfirm'))) {
     emit('delete', id)
   }
 }
@@ -40,10 +41,10 @@ function confirmDelete(id, event) {
   <div class="project-manager">
     <!-- Section header -->
     <div class="section-header">
-      <span class="section-label">Aktive Projekte</span>
+      <span class="section-label">{{ t('project.activeProjects') }}</span>
       <button class="btn-primary" @click="emit('new')">
         <span class="material-symbols-outlined" style="font-size:15px;">add</span>
-        Neues Projekt
+        {{ t('project.newProject') }}
       </button>
     </div>
 
@@ -59,9 +60,9 @@ function confirmDelete(id, event) {
           <div>
             <div class="project-card-header" style="margin-bottom:16px;">
               <span :class="['status-badge', p.id === activeProjectId ? 'active' : 'default']">
-                {{ p.id === activeProjectId ? 'Geöffnet' : 'Inaktiv' }}
+                {{ p.id === activeProjectId ? t('project.opened') : t('project.inactive') }}
               </span>
-              <button class="project-delete-btn" @click="confirmDelete(p.id, $event)" title="Projekt löschen" aria-label="Projekt löschen">
+              <button class="project-delete-btn" @click="confirmDelete(p.id, $event)" :title="t('project.deleteTitle')" :aria-label="t('project.deleteTitle')">
                 <span class="material-symbols-outlined" style="font-size:16px;">delete</span>
               </button>
             </div>
@@ -79,21 +80,21 @@ function confirmDelete(id, event) {
               </template>
               <template v-else>
                 <h3 class="project-card-title">{{ p.name }}</h3>
-                <button class="rename-btn" @click.stop="startRename(p, $event)" title="Projekt umbenennen">
+                <button class="rename-btn" @click.stop="startRename(p, $event)" :title="t('project.renameTitle')">
                   <span class="material-symbols-outlined" style="font-size:14px;">edit</span>
                 </button>
               </template>
             </div>
-            <p class="project-card-meta">{{ p.tasks?.length ?? 0 }} Aufgaben · {{ p.roles?.length ?? 0 }} Rollen</p>
+            <p class="project-card-meta">{{ p.tasks?.length ?? 0 }} {{ t('project.tasks') }} · {{ p.roles?.length ?? 0 }} {{ t('project.roles') }}</p>
           </div>
           <div class="project-card-footer">
             <div style="display:flex;gap:24px;">
               <div>
-                <p style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.12em;color:var(--outline);">Aufgabentypen</p>
+                <p style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.12em;color:var(--outline);">{{ t('project.taskTypes') }}</p>
                 <p style="font-size:1.1rem;font-weight:700;color:var(--on-surface);">{{ p.taskTypes?.length ?? 0 }}</p>
               </div>
               <div>
-                <p style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.12em;color:var(--outline);">Rollen</p>
+                <p style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.12em;color:var(--outline);">{{ t('project.roles') }}</p>
                 <p style="font-size:1.1rem;font-weight:700;color:var(--on-surface);">{{ p.roles?.length ?? 0 }}</p>
               </div>
             </div>
@@ -114,9 +115,9 @@ function confirmDelete(id, event) {
           <div>
             <div class="project-card-header">
               <span :class="['status-badge', p.id === activeProjectId ? 'active' : 'default']">
-                {{ p.id === activeProjectId ? 'Geöffnet' : 'Inaktiv' }}
+                {{ p.id === activeProjectId ? t('project.opened') : t('project.inactive') }}
               </span>
-              <button class="project-delete-btn" style="position:static;padding:4px;" @click="confirmDelete(p.id, $event)" title="Projekt löschen" aria-label="Projekt löschen">
+              <button class="project-delete-btn" style="position:static;padding:4px;" @click="confirmDelete(p.id, $event)" :title="t('project.deleteTitle')" :aria-label="t('project.deleteTitle')">
                 <span class="material-symbols-outlined" style="font-size:16px;">delete</span>
               </button>
             </div>
@@ -134,16 +135,16 @@ function confirmDelete(id, event) {
               </template>
               <template v-else>
                 <h3 class="project-card-title" style="font-size:1rem;margin-top:0;">{{ p.name }}</h3>
-                <button class="rename-btn" @click.stop="startRename(p, $event)" title="Projekt umbenennen">
+                <button class="rename-btn" @click.stop="startRename(p, $event)" :title="t('project.renameTitle')">
                   <span class="material-symbols-outlined" style="font-size:14px;">edit</span>
                 </button>
               </template>
             </div>
-            <p class="project-card-meta">{{ p.tasks?.length ?? 0 }} Aufgaben</p>
+            <p class="project-card-meta">{{ p.tasks?.length ?? 0 }} {{ t('project.tasks') }}</p>
           </div>
           <div style="margin-top:16px;display:flex;justify-content:space-between;align-items:flex-end;">
             <div>
-              <p style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.12em;color:var(--outline);">Rollen</p>
+              <p style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.12em;color:var(--outline);">{{ t('project.roles') }}</p>
               <p style="font-size:1rem;font-weight:700;color:var(--on-surface);">{{ p.roles?.length ?? 0 }}</p>
             </div>
           </div>
@@ -153,17 +154,17 @@ function confirmDelete(id, event) {
       <!-- Add new project card -->
       <div class="add-project-card" @click="emit('new')">
         <span class="material-symbols-outlined" style="font-size:32px;">add_circle</span>
-        <span>Neues Projekt</span>
+        <span>{{ t('project.newProject') }}</span>
       </div>
     </div>
 
     <!-- Empty state -->
     <div v-else class="empty-state">
       <span class="material-symbols-outlined">folder_open</span>
-      <p>Keine Projekte vorhanden.</p>
+      <p>{{ t('project.noProjects') }}</p>
       <button class="btn-primary" @click="emit('new')">
         <span class="material-symbols-outlined" style="font-size:15px;">add</span>
-        Erstes Projekt erstellen
+        {{ t('project.firstProject') }}
       </button>
     </div>
   </div>

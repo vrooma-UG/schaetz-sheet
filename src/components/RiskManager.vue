@@ -1,12 +1,13 @@
 <script setup>
 import { computed } from 'vue'
 import { createRisk } from '../models/index.js'
+import { t } from '../i18n/index.js'
 
 const props = defineProps({ project: Object })
 
 function addRisk() {
   if (!props.project.risks) props.project.risks = []
-  props.project.risks.push(createRisk('Neues Risiko'))
+  props.project.risks.push(createRisk(t('risks.defaultName')))
 }
 
 function removeRisk(id) {
@@ -14,32 +15,30 @@ function removeRisk(id) {
   if (idx !== -1) props.project.risks.splice(idx, 1)
 }
 
-const CATEGORIES = [
-  { value: 'technical',       label: 'Technisch' },
-  { value: 'organizational',  label: 'Organisatorisch' },
-  { value: 'external',        label: 'Extern' },
-  { value: 'financial',       label: 'Finanziell' },
-]
+const CATEGORIES = computed(() => [
+  { value: 'technical',       label: t('risks.catTechnical') },
+  { value: 'organizational',  label: t('risks.catOrganizational') },
+  { value: 'external',        label: t('risks.catExternal') },
+  { value: 'financial',       label: t('risks.catFinancial') },
+])
 
-const STATUSES = [
-  { value: 'open',       label: 'Offen' },
-  { value: 'mitigated',  label: 'Mitigiert' },
-  { value: 'closed',     label: 'Geschlossen' },
-]
+const STATUSES = computed(() => [
+  { value: 'open',       label: t('risks.statusOpen') },
+  { value: 'mitigated',  label: t('risks.statusMitigated') },
+  { value: 'closed',     label: t('risks.statusClosed') },
+])
 
-// Eintrittswahrscheinlichkeit levels
-const PROBABILITY_LEVELS = [
-  { value: 'low',    label: 'Niedrig' },
-  { value: 'medium', label: 'Mittel' },
-  { value: 'high',   label: 'Hoch' },
-]
+const PROBABILITY_LEVELS = computed(() => [
+  { value: 'low',    label: t('risks.probLow') },
+  { value: 'medium', label: t('risks.probMedium') },
+  { value: 'high',   label: t('risks.probHigh') },
+])
 
-// Auswirkung levels
-const IMPACT_LEVELS = [
-  { value: 'low',    label: 'Niedrig' },
-  { value: 'medium', label: 'Mittel' },
-  { value: 'high',   label: 'Hoch' },
-]
+const IMPACT_LEVELS = computed(() => [
+  { value: 'low',    label: t('risks.impactLow') },
+  { value: 'medium', label: t('risks.impactMedium') },
+  { value: 'high',   label: t('risks.impactHigh') },
+])
 
 const risks = computed(() => {
   if (!props.project.risks) return []
@@ -56,14 +55,14 @@ const openRisks = computed(() => risks.value.filter(r => r.status === 'open').le
       <div class="risk-kpi">
         <span class="material-symbols-outlined" style="color:#dc2626;">warning</span>
         <div>
-          <p class="risk-kpi-label">Offene Risiken</p>
+          <p class="risk-kpi-label">{{ t('risks.title') }}</p>
           <p class="risk-kpi-value">{{ openRisks }}</p>
         </div>
       </div>
       <div style="margin-left:auto;">
-        <button @click="addRisk" aria-label="Risiko hinzufügen">
+        <button @click="addRisk" :aria-label="t('risks.addRisk')">
           <span class="material-symbols-outlined" style="font-size:15px;">add</span>
-          Risiko
+          {{ t('risks.addRisk') }}
         </button>
       </div>
     </div>
@@ -74,12 +73,12 @@ const openRisks = computed(() => risks.value.filter(r => r.status === 'open').le
         <table>
           <thead>
             <tr>
-              <th>Name</th>
-              <th>Beschreibung</th>
-              <th>Kategorie</th>
-              <th>Eintrittswahrscheinlichkeit</th>
-              <th>Auswirkung</th>
-              <th>Status</th>
+              <th>{{ t('risks.colName') }}</th>
+              <th>{{ t('risks.colDescription') }}</th>
+              <th>{{ t('risks.colCategory') }}</th>
+              <th>{{ t('risks.colProbability') }}</th>
+              <th>{{ t('risks.colImpact') }}</th>
+              <th>{{ t('risks.colStatus') }}</th>
               <th></th>
             </tr>
           </thead>
@@ -126,7 +125,7 @@ const openRisks = computed(() => risks.value.filter(r => r.status === 'open').le
       </div>
       <div v-if="!risks.length" style="padding:40px;text-align:center;color:var(--outline);">
         <span class="material-symbols-outlined" style="font-size:32px;display:block;margin-bottom:8px;opacity:0.4;">warning</span>
-        Keine Risiken erfasst. Klicke auf „Risiko" um zu beginnen.
+        {{ t('risks.empty') }}
       </div>
     </div>
   </div>
